@@ -1,5 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@400;500;700&family=ZCOOL+KuaiLe&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+SC:wght@400;500;700&display=swap');
 @import './design-tokens.css';
+
+/* 原型全局字体：不使用 ZCOOL KuaiLe */
+:root {
+  --font-display: 'Noto Sans SC', 'PingFang SC', sans-serif;
+}
+
+.app-bar-title,
+.deco-exclaim,
+.section-head-title,
+.loading-tips-title,
+.btn-comic,
+.loading-text,
+.fail-msg,
+.quiz-topic,
+.report-badge,
+.report-section-title,
+.share-poster-badge,
+.share-poster-topic,
+.share-poster-qr-text strong,
+.share-sheet-title,
+.nav-link-card .title {
+  font-weight: 700;
+}
+
+.app-bar-title,
+.share-poster-brand,
+.nav-index h1 {
+  font-family: var(--font-score);
+  font-weight: 400;
+  letter-spacing: 2px;
+}
+
+.report-score-unit,
+.share-poster-score span {
+  font-family: var(--font-score);
+  font-weight: 400;
+}
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -45,7 +82,7 @@ body {
 }
 
 .proto-header h1 {
-  font-family: var(--font-display);
+  font-family: var(--font-score);
   font-size: 2rem;
   letter-spacing: 2px;
 }
@@ -80,8 +117,9 @@ body {
 }
 
 .screen-label {
-  font-family: var(--font-display);
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 700;
   background: var(--marker-yellow);
   border: var(--border-comic);
   padding: 4px 16px;
@@ -158,9 +196,7 @@ body {
 }
 
 .app-bar-title {
-  font-family: var(--font-display);
   font-size: 1.25rem;
-  letter-spacing: 1px;
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
@@ -234,17 +270,117 @@ body {
   z-index: 5;
 }
 
+/* ── 首页品牌头 ── */
+.home-header {
+  text-align: center;
+  padding-top: calc(var(--safe-top) - 8px);
+  margin-bottom: var(--space-md);
+}
+
+.home-brand {
+  font-family: var(--font-score);
+  font-size: 2rem;
+  letter-spacing: 3px;
+  line-height: 1.1;
+  color: var(--ink-black);
+}
+
+.home-tagline {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
+
+/* ── 底部 Tab 导航（首页 / 题库 / 我的）── */
+.phone-screen--with-tab {
+  overflow: hidden;
+}
+
+.phone-screen--with-tab .app-content {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-bottom: var(--space-sm);
+}
+
+.tab-bar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: stretch;
+  border-top: var(--border-comic);
+  background: #fff;
+  padding: 2px 6px 6px;
+  box-shadow: 0 -2px 0 rgba(26, 26, 46, 0.05);
+  position: relative;
+  z-index: 20;
+  min-height: 44px;
+}
+
+.tab-bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: var(--ink-light);
+  text-decoration: none;
+  padding: 2px 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.tab-bar-item svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2;
+}
+
+.tab-bar-item.active {
+  color: var(--ink-black);
+  font-weight: 700;
+}
+
+.tab-bar-item.active svg {
+  stroke-width: 2.5;
+}
+
+.tab-bar-item.active .tab-bar-icon {
+  background: var(--marker-yellow);
+  border: 1.5px solid var(--ink-black);
+  border-radius: 6px;
+  box-shadow: 1px 1px 0 var(--ink-black);
+  padding: 1px;
+}
+
+.tab-bar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
 /* ── 输入页 · 极简主输入区 ── */
 .input-simple {
   margin-bottom: var(--space-md);
 }
 
 .input-simple-tagline {
-  font-family: var(--font-display);
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
   text-align: center;
   margin-bottom: var(--space-md);
-  color: var(--ink-black);
+  color: var(--ink-muted);
 }
 
 /* 主输入卡片：textarea + 底栏一体 */
@@ -544,6 +680,26 @@ body {
   padding-top: var(--space-sm);
 }
 
+.quiz-nav-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.quiz-nav-btn {
+  flex: 1;
+  width: auto;
+  min-width: 0;
+}
+
+.app-content--quiz {
+  min-height: 0;
+}
+
+.app-content--quiz > .quiz-nav-row {
+  margin-top: auto;
+}
+
 .concept-tags-row {
   display: flex;
   flex-wrap: wrap;
@@ -780,30 +936,97 @@ body {
   padding: var(--space-xl);
 }
 
-.loading-crystal {
-  width: 80px;
-  height: 120px;
+.loading-flask {
+  width: 76px;
+  height: 92px;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.loading-crystal-svg {
-  width: 64px;
-  height: 100px;
-  animation: crystal-pulse 2s ease-in-out infinite;
+.loading-flask-svg {
+  width: 58px;
+  height: 70px;
+  overflow: visible;
 }
 
-@keyframes crystal-pulse {
-  0%, 100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 4px rgba(46, 250, 163, 0.25));
+.loading-liquid {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: flask-fill-liquid 3s ease-in-out infinite;
+}
+
+.loading-liquid-core {
+  animation: flask-fill-core 3s ease-in-out infinite;
+}
+
+.loading-flask-aura {
+  animation: flask-fill-aura 3s ease-in-out infinite;
+}
+
+.loading-bubble--1 { animation: flask-bubble-1 3s ease-in-out infinite; }
+.loading-bubble--2 { animation: flask-bubble-2 3s ease-in-out infinite; }
+
+.loading-flask-sparkles {
+  animation: flask-sparkles 3s ease-in-out infinite;
+}
+
+@keyframes flask-fill-liquid {
+  0%, 4% { transform: scaleY(0); }
+  55% { transform: scaleY(1); }
+  78% { transform: scaleY(1); }
+  92%, 100% { transform: scaleY(0); }
+}
+
+@keyframes flask-fill-core {
+  0%, 48% { opacity: 0; }
+  62% { opacity: 1; }
+  78% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes flask-fill-aura {
+  0%, 45% { opacity: 0; }
+  60% { opacity: 0.22; }
+  78% { opacity: 0.22; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes flask-bubble-1 {
+  0%, 52% { opacity: 0; }
+  65%, 78% { opacity: 0.55; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes flask-bubble-2 {
+  0%, 56% { opacity: 0; }
+  68%, 78% { opacity: 0.4; }
+  92%, 100% { opacity: 0; }
+}
+
+@keyframes flask-sparkles {
+  0%, 58% { opacity: 0; }
+  72%, 78% { opacity: 1; }
+  92%, 100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-liquid,
+  .loading-liquid-core,
+  .loading-flask-aura,
+  .loading-bubble--1,
+  .loading-bubble--2,
+  .loading-flask-sparkles {
+    animation: none;
   }
-  50% {
-    transform: scale(1.06);
-    filter: drop-shadow(0 0 14px rgba(46, 250, 163, 0.55));
-  }
+
+  .loading-liquid { transform: scaleY(1); }
+  .loading-liquid-core { opacity: 1; }
+  .loading-flask-aura { opacity: 0.18; }
+  .loading-bubble--1 { opacity: 0.55; }
+  .loading-bubble--2 { opacity: 0.4; }
+  .loading-flask-sparkles { opacity: 1; }
 }
 
 .loading-text {
@@ -885,6 +1108,17 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: var(--space-xs);
+}
+
+.quiz-top-spacer {
+  width: 36px;
+  flex-shrink: 0;
+}
+
+.quiz-lingyun-row {
+  display: flex;
+  justify-content: flex-end;
   margin-bottom: var(--space-sm);
 }
 
@@ -899,59 +1133,90 @@ body {
   white-space: nowrap;
 }
 
-/* 灵韵 · 能量水晶生命条 */
-.lingyun-bar {
+/* 灵韵 · 炼金瓶（图标 + 余量文案，无气泡底） */
+.lingyun-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.lingyun-badge-icon {
+  width: 26px;
+  height: 31px;
+  flex-shrink: 0;
+  display: block;
+  filter: drop-shadow(0 0 4px rgba(46, 250, 163, 0.35));
+}
+
+.lingyun-badge--depleted .lingyun-badge-icon {
+  filter: none;
+}
+
+.lingyun-badge-text {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  flex-shrink: 0;
   gap: 1px;
+  min-width: 0;
 }
 
-.lingyun-crystal {
-  width: 32px;
-  height: 50px;
-  display: block;
-}
-
-.lingyun-bar--lg .lingyun-crystal {
-  width: 48px;
-  height: 76px;
-}
-
-.lingyun-label {
-  font-size: 0.5rem;
+.lingyun-badge-title {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--amber-gold);
-  letter-spacing: 1px;
-  line-height: 1;
-  text-shadow: 0.5px 0.5px 0 var(--ink-black);
+  color: var(--ink-black);
+  line-height: 1.25;
+  white-space: nowrap;
 }
 
-.lingyun-count {
-  font-size: 0.55rem;
-  font-weight: 600;
-  color: var(--ink-muted);
+.lingyun-badge-count {
   font-variant-numeric: tabular-nums;
-  line-height: 1;
 }
 
-.lingyun-count.low { color: var(--chalk-red); font-weight: 700; }
+.lingyun-badge-hint {
+  font-family: var(--font-body);
+  font-size: 0.55rem;
+  font-weight: 400;
+  color: var(--ink-muted);
+  line-height: 1.25;
+  white-space: nowrap;
+}
 
-.lingyun-bar--depleted .lingyun-label { color: var(--ink-light); }
+.lingyun-badge--warn .lingyun-badge-count {
+  color: var(--chalk-red-dark);
+}
+
+.lingyun-badge--depleted .lingyun-badge-title,
+.lingyun-badge--depleted .lingyun-badge-count {
+  color: var(--ink-light);
+}
+
+.lingyun-badge--depleted .lingyun-badge-hint {
+  color: var(--ink-light);
+}
+
+.lingyun-badge--lg {
+  gap: 8px;
+}
+
+.lingyun-badge--lg .lingyun-badge-icon {
+  width: 34px;
+  height: 41px;
+  filter: none;
+}
+
+.lingyun-badge--lg .lingyun-badge-title {
+  font-size: 0.85rem;
+}
+
+.lingyun-badge--lg .lingyun-badge-hint {
+  font-size: 0.62rem;
+}
 
 .lingyun-hero {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-xs);
+  justify-content: center;
   margin-bottom: var(--space-md);
-}
-
-.lingyun-hero-caption {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  color: var(--ink-muted);
 }
 
 .quiz-progress {
@@ -1182,7 +1447,6 @@ body {
 }
 
 .report-score-unit {
-  font-family: var(--font-display);
   font-size: 1.5rem;
   vertical-align: super;
 }
@@ -1259,10 +1523,16 @@ body {
 
 .report-actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: var(--space-sm);
   margin-top: auto;
   padding-top: var(--space-md);
+}
+
+.report-actions .btn-comic {
+  flex: 1;
+  width: auto;
+  min-width: 0;
 }
 
 /* ── 战绩海报 ── */
@@ -1343,9 +1613,7 @@ body {
 }
 
 .share-poster-brand {
-  font-family: var(--font-display);
   font-size: 1.35rem;
-  letter-spacing: 2px;
   margin-bottom: var(--space-sm);
 }
 
@@ -1372,7 +1640,6 @@ body {
 }
 
 .share-poster-score span {
-  font-family: var(--font-display);
   font-size: 1.2rem;
   vertical-align: super;
 }
@@ -1402,16 +1669,17 @@ body {
   padding: 2px 8px;
 }
 
-.share-poster-crystal {
+.share-poster-flask {
   display: flex;
   justify-content: center;
   margin: var(--space-xs) 0 var(--space-sm);
 }
 
-.share-poster-crystal svg {
-  width: 36px;
-  height: 56px;
-  opacity: 0.85;
+.share-poster-flask svg {
+  width: 46px;
+  height: 55px;
+  opacity: 0.95;
+  filter: drop-shadow(0 0 6px rgba(46, 250, 163, 0.4));
 }
 
 .share-poster-footer {
@@ -1600,7 +1868,6 @@ body {
 }
 
 .nav-index h1 {
-  font-family: var(--font-display);
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: var(--space-sm);

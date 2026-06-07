@@ -13,7 +13,84 @@
   <symbol id="icon-paste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></symbol>
   <symbol id="icon-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
   <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
-  <!-- 灵韵 · 能量水晶（烟雾化星 = 三次机会） -->
+  <!-- 灵韵 · 玻璃曲颈烧瓶（发光药液 = 三次机会） -->
+  <defs>
+    <linearGradient id="flask-glass" x1="8" y1="2" x2="32" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#EAF6FF" stop-opacity="0.85"/>
+      <stop offset="45%" stop-color="#FFFFFF" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#B8D4E8" stop-opacity="0.4"/>
+    </linearGradient>
+    <linearGradient id="flask-liquid" x1="20" y1="41" x2="20" y2="13" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1BCB7A"/>
+      <stop offset="50%" stop-color="#2EFAA3"/>
+      <stop offset="100%" stop-color="#7DF8D8"/>
+    </linearGradient>
+    <linearGradient id="flask-liquid-dim" x1="20" y1="41" x2="20" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1BCB7A" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#4DD0E1" stop-opacity="0.35"/>
+    </linearGradient>
+    <radialGradient id="flask-liquid-glow" cx="20" cy="30" r="14" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.75"/>
+      <stop offset="45%" stop-color="#2EFAA3" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#2EFAA3" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="flask-glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.6" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <clipPath id="flask-body-clip">
+      <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z"/>
+    </clipPath>
+  </defs>
+  <symbol id="icon-flask-3" viewBox="0 0 40 48">
+    <ellipse cx="20" cy="33" rx="11" ry="9" fill="#2EFAA3" opacity="0.18"/>
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
+    <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
+      <path d="M12.5 38.5 L15 14.5 L25 14.5 L27.5 38.5 Q27.5 41.5 20 41.5 Q12.5 41.5 12.5 38.5 Z" fill="url(#flask-liquid)"/>
+      <ellipse cx="20" cy="30" rx="5" ry="7" fill="url(#flask-liquid-glow)"/>
+      <circle cx="17" cy="28" r="1" fill="#FFFFFF" opacity="0.55"/>
+      <circle cx="22" cy="33" r="0.7" fill="#FFFFFF" opacity="0.4"/>
+    </g>
+    <path d="M14 5 L14.5 38 Q15 41 20 41 Q25 41 25.5 38 L26 14" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
+    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="28" cy="6" r="0.9" fill="#2EFAA3" opacity="0.7"/>
+    <circle cx="31" cy="9" r="0.6" fill="#4DD0E1" opacity="0.6"/>
+  </symbol>
+  <symbol id="icon-flask-2" viewBox="0 0 40 48">
+    <ellipse cx="20" cy="35" rx="9" ry="7" fill="#2EFAA3" opacity="0.12"/>
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
+    <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
+      <path d="M13.5 38.5 L16 22 L24 22 L26.5 38.5 Q26.5 41.5 20 41.5 Q13.5 41.5 13.5 38.5 Z" fill="url(#flask-liquid)"/>
+      <ellipse cx="20" cy="32" rx="4" ry="5" fill="url(#flask-liquid-glow)" opacity="0.8"/>
+    </g>
+    <path d="M14 5 L14.5 38 Q15 41 20 41 Q25 41 25.5 38 L26 14" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.45"/>
+    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="29" cy="7" r="0.7" fill="#4DD0E1" opacity="0.45"/>
+  </symbol>
+  <symbol id="icon-flask-1" viewBox="0 0 40 48">
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
+    <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
+      <path d="M14.5 38.5 L17 29 L23 29 L25.5 38.5 Q25.5 41.5 20 41.5 Q14.5 41.5 14.5 38.5 Z" fill="url(#flask-liquid-dim)"/>
+      <ellipse cx="20" cy="35" rx="3" ry="3.5" fill="url(#flask-liquid-glow)" opacity="0.5"/>
+    </g>
+    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="icon-flask-0" viewBox="0 0 40 48">
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="#F0F2F5" stroke="none" opacity="0.9"/>
+    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#ECEFF1" stroke="#9AA5B1" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 3.2 H23 V11 H17 Z" fill="#F5F5F5" stroke="#9AA5B1" stroke-width="1.4" stroke-linejoin="round"/>
+    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#9AA5B1" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M14 24 L17 31 L15 37" stroke="#B0BEC5" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <path d="M26 22 L23 30 L25 36" stroke="#B0BEC5" stroke-width="1.1" fill="none" stroke-linecap="round"/>
+    <line x1="12" y1="34" x2="28" y2="37" stroke="#B0BEC5" stroke-width="0.9" opacity="0.55"/>
+  </symbol>
+  <!-- 灵韵 · 能量水晶（遗留 symbol，答题页已改用炼金瓶） -->
   <symbol id="lingyun-3" viewBox="0 0 48 76">
     <defs>
       <linearGradient id="ly3-core" x1="24" y1="68" x2="24" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#B8860B"/><stop offset="45%" stop-color="#F0C030"/><stop offset="100%" stop-color="#FFF8C8"/></linearGradient>
@@ -96,12 +173,15 @@
   <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
   <symbol id="icon-wechat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8.5 11.5a1 1 0 100-2 1 1 0 000 2zM13.5 11.5a1 1 0 100-2 1 1 0 000 2z"/><path d="M17 14.5c1.5-1 2.5-2.6 2.5-4.5a6 6 0 00-11.3-2.8A5 5 0 003 14c0 2.2 1.5 4 3.5 5l-.5 2 2.5-1.2A7 7 0 0017 14.5z"/></symbol>
   <symbol id="icon-moments" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="14" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="10" cy="14" r="1.2" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="icon-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1v-9.5z"/></symbol>
+  <symbol id="icon-bank" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h8"/></symbol>
+  <symbol id="icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></symbol>
 </svg>
 
 <div class="proto-page">
   <header class="proto-header">
     <h1>AI炼金 · Phase 0 核心业务流程</h1>
-    <p>12 屏原型 · 输入页极简 + 答题灵韵 + 报告分享海报</p>
+    <p>12 屏原型 · 首页底部 Tab + 输入三态 + 答题灵韵 + 报告分享海报</p>
   </header>
 
   <div class="proto-grid">
@@ -109,18 +189,16 @@
     <!-- ═══ 屏 1：输入页 · 空态 ═══ -->
     <div class="screen-card">
       <div class="screen-label">屏 1 · 输入页 · 空态</div>
-      <div class="screen-sublabel">极简输入 + 轻量附件</div>
+      <div class="screen-sublabel">极简输入 + 底部 Tab 导航</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="app-bar">
-            <div style="width:36px"></div>
-            <div class="app-bar-title">AI炼金</div>
-            <div style="width:36px"></div>
-          </div>
+        <div class="phone-screen phone-screen--with-tab">
           <div class="app-content">
+            <header class="home-header">
+              <h1 class="home-brand">AI炼金</h1>
+              <p class="home-tagline">粘贴知识，炼成闯关题</p>
+            </header>
             <div class="input-simple">
-              <p class="input-simple-tagline">粘贴知识，炼成闯关题</p>
               <div class="input-card">
                 <textarea class="input-card-textarea" placeholder="粘贴你想学习的知识…" readonly></textarea>
                 <div class="input-card-bar">
@@ -171,6 +249,20 @@
               </div>
             </div>
           </div>
+          <nav class="tab-bar" aria-label="主导航">
+            <button class="tab-bar-item active" type="button" aria-current="page">
+              <span class="tab-bar-icon"><svg><use href="#icon-home"/></svg></span>
+              <span>首页</span>
+            </button>
+            <button class="tab-bar-item" type="button">
+              <span class="tab-bar-icon"><svg><use href="#icon-bank"/></svg></span>
+              <span>题库</span>
+            </button>
+            <button class="tab-bar-item" type="button">
+              <span class="tab-bar-icon"><svg><use href="#icon-user"/></svg></span>
+              <span>我的</span>
+            </button>
+          </nav>
         </div>
       </div>
     </div>
@@ -181,15 +273,13 @@
       <div class="screen-sublabel">128 字 · 可发起闯关</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="app-bar">
-            <div style="width:36px"></div>
-            <div class="app-bar-title">AI炼金</div>
-            <div style="width:36px"></div>
-          </div>
+        <div class="phone-screen phone-screen--with-tab">
           <div class="app-content">
+            <header class="home-header">
+              <h1 class="home-brand">AI炼金</h1>
+              <p class="home-tagline">开炼！</p>
+            </header>
             <div class="input-simple">
-              <p class="input-simple-tagline">开炼！</p>
               <div class="input-card">
                 <textarea class="input-card-textarea" readonly>Go 语言中，goroutine 是轻量级线程，由 Go 运行时调度。channel 用于 goroutine 之间通信，遵循「不要通过共享内存来通信，而要通过通信来共享内存」的哲学。sync.Mutex 用于保护共享资源。</textarea>
                 <div class="input-card-bar">
@@ -239,6 +329,20 @@
               </div>
             </div>
           </div>
+          <nav class="tab-bar" aria-label="主导航">
+            <button class="tab-bar-item active" type="button" aria-current="page">
+              <span class="tab-bar-icon"><svg><use href="#icon-home"/></svg></span>
+              <span>首页</span>
+            </button>
+            <button class="tab-bar-item" type="button">
+              <span class="tab-bar-icon"><svg><use href="#icon-bank"/></svg></span>
+              <span>题库</span>
+            </button>
+            <button class="tab-bar-item" type="button">
+              <span class="tab-bar-icon"><svg><use href="#icon-user"/></svg></span>
+              <span>我的</span>
+            </button>
+          </nav>
         </div>
       </div>
     </div>
@@ -246,18 +350,16 @@
     <!-- ═══ 屏 3：输入页 · 校验失败 ═══ -->
     <div class="screen-card">
       <div class="screen-label">屏 3 · 输入页 · 校验失败</div>
-      <div class="screen-sublabel">空内容点击闯关</div>
+      <div class="screen-sublabel">空内容点击闯关 · 按钮禁用</div>
       <div class="phone-frame">
         <div class="phone-notch"></div>
-        <div class="phone-screen">
-          <div class="app-bar">
-            <div style="width:36px"></div>
-            <div class="app-bar-title">AI炼金</div>
-            <div style="width:36px"></div>
-          </div>
+        <div class="phone-screen phone-screen--with-tab">
           <div class="app-content">
+            <header class="home-header">
+              <h1 class="home-brand">AI炼金</h1>
+              <p class="home-tagline">先写点啥吧</p>
+            </header>
             <div class="input-simple">
-              <p class="input-simple-tagline">先写点啥吧</p>
               <div class="error-toast">
                 <svg><use href="#icon-alert"/></svg>
                 <span>请输入学习内容</span>
@@ -303,6 +405,20 @@
               </div>
             </div>
           </div>
+          <nav class="tab-bar" aria-label="主导航">
+            <button class="tab-bar-item active" type="button" aria-current="page">
+              <span class="tab-bar-icon"><svg><use href="#icon-home"/></svg></span>
+              <span>首页</span>
+            </button>
+            <button class="tab-bar-item" type="button">
+              <span class="tab-bar-icon"><svg><use href="#icon-bank"/></svg></span>
+              <span>题库</span>
+            </button>
+            <button class="tab-bar-item" type="button">
+              <span class="tab-bar-icon"><svg><use href="#icon-user"/></svg></span>
+              <span>我的</span>
+            </button>
+          </nav>
         </div>
       </div>
     </div>
@@ -321,8 +437,27 @@
           </div>
           <div class="app-content" style="justify-content:center">
             <div class="loading-center" style="flex:0;padding:var(--space-lg) 0">
-              <div class="loading-crystal">
-                <svg class="loading-crystal-svg" viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
+              <div class="loading-flask">
+                <svg class="loading-flask-svg" viewBox="0 0 40 48" aria-hidden="true">
+                  <ellipse class="loading-flask-aura" cx="20" cy="33" rx="12" ry="10" fill="#2EFAA3" opacity="0"/>
+                  <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
+                  <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
+                    <g class="loading-liquid">
+                      <path d="M12.5 38.5 L15 14.5 L25 14.5 L27.5 38.5 Q27.5 41.5 20 41.5 Q12.5 41.5 12.5 38.5 Z" fill="url(#flask-liquid)"/>
+                      <ellipse class="loading-liquid-core" cx="20" cy="30" rx="5" ry="7" fill="url(#flask-liquid-glow)"/>
+                      <circle class="loading-bubble loading-bubble--1" cx="17" cy="28" r="1" fill="#FFFFFF" opacity="0"/>
+                      <circle class="loading-bubble loading-bubble--2" cx="22" cy="33" r="0.7" fill="#FFFFFF" opacity="0"/>
+                    </g>
+                  </g>
+                  <path d="M14 5 L14.5 38 Q15 41 20 41 Q25 41 25.5 38 L26 14" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+                  <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
+                  <g class="loading-flask-sparkles">
+                    <circle cx="28" cy="6" r="0.9" fill="#2EFAA3"/>
+                    <circle cx="31" cy="9" r="0.6" fill="#4DD0E1"/>
+                  </g>
+                </svg>
               </div>
               <div class="loading-text">AI 正在准备关卡<span class="loading-dots"></span></div>
               <div class="loading-progress">
@@ -341,7 +476,7 @@
             <div class="loading-tips">
               <div class="loading-tips-title">炼金小知识</div>
               <div class="loading-tips-item active">每关 3–5 题，约 3–5 分钟完成</div>
-              <div class="loading-tips-item">答错散逸 1 缕灵韵，烟雾顶端三颗星代表三次机会</div>
+              <div class="loading-tips-item">答错散逸 1 缕灵韵，炼金瓶药液代表三次机会</div>
               <div class="loading-tips-item">通关后 AI 生成个性化复盘报告</div>
             </div>
           </div>
@@ -416,9 +551,15 @@
             <div class="quiz-top-row">
               <button class="app-bar-back" aria-label="返回"><svg><use href="#icon-back"/></svg></button>
               <div class="quiz-topic">Go 并发编程基础</div>
-              <div class="lingyun-bar" aria-label="灵韵 3/3" title="炼金过程中精神的升华与消散">
-                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
-                <span class="lingyun-label">灵韵</span>
+              <div class="quiz-top-spacer" aria-hidden="true"></div>
+            </div>
+            <div class="quiz-lingyun-row">
+              <div class="lingyun-badge" aria-label="灵韵 3/3">
+                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-3"/></svg>
+                <div class="lingyun-badge-text">
+                  <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">3/3</span></div>
+                  <div class="lingyun-badge-hint">答错散逸 1 缕灵韵</div>
+                </div>
               </div>
             </div>
             <div class="quiz-progress">
@@ -426,7 +567,7 @@
               <span class="quiz-progress-text">第 3/5 题</span>
             </div>
           </div>
-          <div class="app-content" style="padding-top:0">
+          <div class="app-content app-content--quiz" style="padding-top:0">
             <div class="question-panel">
               <span class="difficulty-tag medium">中等</span>
               <div class="question-stem">Go 语言中，goroutine 的默认栈大小是多少？</div>
@@ -442,9 +583,15 @@
                 <span class="concept-tag">goroutine</span>
                 <span class="concept-tag">内存模型</span>
               </div>
-              <div class="page-tip-bar">
-                <svg><use href="#icon-bulb"/></svg>
-                <p>单选题：点击选项后立即反馈，答错散逸 1 缕灵韵。本题考查 goroutine 栈的初始大小。</p>
+              <div class="quiz-nav-row">
+                <button class="btn-comic btn-secondary btn-sm quiz-nav-btn" type="button">
+                  <svg width="16" height="16"><use href="#icon-back"/></svg>
+                  上一题
+                </button>
+                <button class="btn-comic btn-disabled btn-sm quiz-nav-btn" type="button" disabled>
+                  下一题
+                  <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -463,9 +610,15 @@
             <div class="quiz-top-row">
               <button class="app-bar-back" aria-label="返回"><svg><use href="#icon-back"/></svg></button>
               <div class="quiz-topic">Go 并发编程基础</div>
-              <div class="lingyun-bar" aria-label="灵韵 3/3">
-                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
-                <span class="lingyun-label">灵韵</span>
+              <div class="quiz-top-spacer" aria-hidden="true"></div>
+            </div>
+            <div class="quiz-lingyun-row">
+              <div class="lingyun-badge" aria-label="灵韵 3/3">
+                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-3"/></svg>
+                <div class="lingyun-badge-text">
+                  <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">3/3</span></div>
+                  <div class="lingyun-badge-hint">答对后仍保留余辉</div>
+                </div>
               </div>
             </div>
             <div class="quiz-progress">
@@ -473,7 +626,7 @@
               <span class="quiz-progress-text">第 3/5 题</span>
             </div>
           </div>
-          <div class="app-content" style="padding-top:0">
+          <div class="app-content app-content--quiz" style="padding-top:0">
             <div class="question-panel">
               <span class="difficulty-tag medium">中等</span>
               <div class="question-stem">Go 语言中，goroutine 的默认栈大小是多少？</div>
@@ -490,12 +643,15 @@
               </div>
               <div class="explain-body">goroutine 初始栈仅 2KB，远小于传统线程的 MB 级栈。Go 运行时会根据需要动态扩缩栈，这也是它能轻松创建成千上万个 goroutine 的原因。</div>
             </div>
-            <button class="btn-comic btn-primary btn-sm" style="width:100%;margin-bottom:var(--space-sm)">
-              下一题 <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
-            </button>
-            <div class="page-tip-bar">
-              <svg><use href="#icon-clock"/></svg>
-              <p>剩余 2 题 · 当前正确率 100% · 保持连胜！</p>
+            <div class="quiz-nav-row">
+              <button class="btn-comic btn-secondary btn-sm quiz-nav-btn" type="button">
+                <svg width="16" height="16"><use href="#icon-back"/></svg>
+                上一题
+              </button>
+              <button class="btn-comic btn-primary btn-sm quiz-nav-btn" type="button">
+                下一题
+                <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -513,10 +669,15 @@
             <div class="quiz-top-row">
               <button class="app-bar-back" aria-label="返回"><svg><use href="#icon-back"/></svg></button>
               <div class="quiz-topic">Go 并发编程基础</div>
-              <div class="lingyun-bar" aria-label="灵韵 2/3">
-                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-2"/></svg>
-                <span class="lingyun-label">灵韵</span>
-                <span class="lingyun-count">2/3</span>
+              <div class="quiz-top-spacer" aria-hidden="true"></div>
+            </div>
+            <div class="quiz-lingyun-row">
+              <div class="lingyun-badge lingyun-badge--warn" aria-label="灵韵 2/3">
+                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-2"/></svg>
+                <div class="lingyun-badge-text">
+                  <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">2/3</span></div>
+                  <div class="lingyun-badge-hint">答对后仍保留余辉</div>
+                </div>
               </div>
             </div>
             <div class="quiz-progress">
@@ -524,7 +685,7 @@
               <span class="quiz-progress-text">第 3/5 题</span>
             </div>
           </div>
-          <div class="app-content" style="padding-top:0">
+          <div class="app-content app-content--quiz" style="padding-top:0">
             <div class="question-panel">
               <span class="difficulty-tag medium">中等</span>
               <div class="question-stem">Go 语言中，goroutine 的默认栈大小是多少？</div>
@@ -541,12 +702,15 @@
               </div>
               <div class="explain-body">正确答案是 A：2 KB。很多人误以为 goroutine 栈和线程一样大，其实 Go 的栈从 2KB 起步，按需动态增长，这是高并发的关键设计。</div>
             </div>
-            <button class="btn-comic btn-primary btn-sm" style="width:100%;margin-bottom:var(--space-sm)">
-              下一题 <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
-            </button>
-            <div class="page-tip-bar" style="border-color:var(--chalk-red);background:rgba(231,76,60,0.06)">
-              <svg style="color:var(--chalk-red)"><use href="#icon-alert"/></svg>
-              <p>水晶现裂痕，一颗星已消散。再错一次，灵韵继续散逸～</p>
+            <div class="quiz-nav-row">
+              <button class="btn-comic btn-secondary btn-sm quiz-nav-btn" type="button">
+                <svg width="16" height="16"><use href="#icon-back"/></svg>
+                上一题
+              </button>
+              <button class="btn-comic btn-primary btn-sm quiz-nav-btn" type="button">
+                下一题
+                <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
+              </button>
             </div>
           </div>
         </div>
@@ -613,11 +777,11 @@
             </div>
 
             <div class="report-actions">
-              <button class="btn-comic btn-amber" type="button">
-                <svg width="20" height="20"><use href="#icon-share"/></svg> 分享战绩
+              <button class="btn-comic btn-amber btn-sm" type="button">
+                <svg width="18" height="18"><use href="#icon-share"/></svg> 分享战绩
               </button>
-              <button class="btn-comic btn-primary" type="button">
-                <svg width="20" height="20"><use href="#icon-crystal"/></svg> 再来一局
+              <button class="btn-comic btn-primary btn-sm" type="button">
+                <svg width="18" height="18"><use href="#icon-crystal"/></svg> 再来一局
               </button>
             </div>
           </div>
@@ -655,11 +819,13 @@
               </div>
             </div>
             <div class="lingyun-hero">
-              <div class="lingyun-bar lingyun-bar--lg lingyun-bar--depleted" aria-label="灵韵 0/3">
-                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-0"/></svg>
-                <span class="lingyun-label">灵韵</span>
+              <div class="lingyun-badge lingyun-badge--lg lingyun-badge--depleted" aria-label="灵韵 0/3">
+                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-0"/></svg>
+                <div class="lingyun-badge-text">
+                  <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">0/3</span></div>
+                  <div class="lingyun-badge-hint">瓶空力尽，精神的升华已消散殆尽</div>
+                </div>
               </div>
-              <span class="lingyun-hero-caption">晶碎星灭，精神的升华已消散殆尽</span>
             </div>
             <div class="report-section">
               <div class="report-section-title">薄弱知识点</div>
@@ -699,11 +865,11 @@
             </div>
 
             <div class="report-actions">
-              <button class="btn-comic btn-amber" type="button">
-                <svg width="20" height="20"><use href="#icon-share"/></svg> 分享复盘
+              <button class="btn-comic btn-amber btn-sm" type="button">
+                <svg width="18" height="18"><use href="#icon-share"/></svg> 分享复盘
               </button>
-              <button class="btn-comic btn-primary" type="button">
-                <svg width="20" height="20"><use href="#icon-crystal"/></svg> 再来一局
+              <button class="btn-comic btn-primary btn-sm" type="button">
+                <svg width="18" height="18"><use href="#icon-crystal"/></svg> 再来一局
               </button>
             </div>
           </div>
@@ -740,8 +906,8 @@
                 <span class="weak-tag partial">channel</span>
                 <span class="weak-tag weak">mutex</span>
               </div>
-              <div class="share-poster-crystal" aria-hidden="true">
-                <svg viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
+              <div class="share-poster-flask" aria-hidden="true">
+                <svg viewBox="0 0 40 48"><use href="#icon-flask-3"/></svg>
               </div>
               <div class="share-poster-footer">
                 <div class="share-poster-qr" aria-label="小程序码">

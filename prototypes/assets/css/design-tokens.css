@@ -1,0 +1,58 @@
+/* AI炼金 · 阿衰风设计令牌 */
+:root {
+  /* 纸感背景 */
+  --paper-bg: #fff8e7;
+  --paper-line: rgba(26, 26, 46, 0.06);
+  --paper-margin: rgba(231, 76, 60, 0.25);
+
+  /* 墨线与文字 */
+  --ink-black: #1a1a2e;
+  --ink-muted: #5c5c7a;
+  --ink-light: #8a8aa3;
+
+  /* 功能色 */
+  --chalk-green: #2ecc71;
+  --chalk-green-dark: #27ae60;
+  --chalk-red: #e74c3c;
+  --chalk-red-dark: #c0392b;
+  --marker-yellow: #ffe066;
+  --marker-yellow-dark: #f1c40f;
+  --pencil-blue: #3498db;
+  --lab-purple: #9b59b6;
+  /* 灵韵 · 炼金色系 */
+  --amber-gold: #d4a017;
+  --amber-light: #f5d76e;
+  --spirit-green: #2efaa3;
+  --spirit-blue: #4dd0e1;
+  --lingyun-star: #ffe566;
+
+  /* 漫画硬阴影 */
+  --comic-shadow: 4px 4px 0 var(--ink-black);
+  --comic-shadow-sm: 2px 2px 0 var(--ink-black);
+  --comic-shadow-lg: 6px 6px 0 var(--ink-black);
+  --border-comic: 2.5px solid var(--ink-black);
+
+  /* 圆角 */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+
+  /* 字体 */
+  --font-display: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
+  --font-body: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-score: 'Bebas Neue', 'Impact', sans-serif;
+
+  /* 间距 */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* 手机框 */
+  --phone-width: 375px;
+  --phone-height: 812px;
+  --safe-top: 44px;
+  --safe-bottom: 34px;
+}

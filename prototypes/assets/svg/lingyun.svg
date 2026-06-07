@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- Lingyun energy crystal sprites (mirror of inline symbols in 01-??????.html) -->
+  <symbol id="lingyun-3" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly3-core" x1="24" y1="68" x2="24" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#B8860B"/><stop offset="45%" stop-color="#F0C030"/><stop offset="100%" stop-color="#FFF8C8"/></linearGradient>
+      <linearGradient id="ly3-facet-l" x1="14" y1="40" x2="24" y2="55" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E8B020" stop-opacity="0.9"/><stop offset="100%" stop-color="#2EFAA3" stop-opacity="0.35"/></linearGradient>
+      <linearGradient id="ly3-facet-r" x1="34" y1="40" x2="24" y2="55" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#D4A017" stop-opacity="0.85"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0.3"/></linearGradient>
+      <radialGradient id="ly3-glow" cx="24" cy="50" r="18"><stop offset="0%" stop-color="#2EFAA3" stop-opacity="0.5"/><stop offset="60%" stop-color="#4DD0E1" stop-opacity="0.15"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ly3-mist" x1="24" y1="28" x2="24" y2="2" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#F5D76E" stop-opacity="0.9"/><stop offset="100%" stop-color="#E8D5A8" stop-opacity="0.1"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <path d="M24 27 C20 22 22 16 24 11 C26 6 24 3 24 1" fill="none" stroke="url(#ly3-mist)" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M24 27 C28 22 26 17 24 13" fill="none" stroke="url(#ly3-mist)" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
+    <ellipse cx="24" cy="50" rx="16" ry="18" fill="url(#ly3-glow)"/>
+    <polygon points="24,28 14,44 17,62 24,68 31,62 34,44" fill="url(#ly3-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="24,28 14,44 24,68" fill="url(#ly3-facet-l)" stroke="none" opacity="0.85"/>
+    <polygon points="24,28 34,44 24,68" fill="url(#ly3-facet-r)" stroke="none" opacity="0.75"/>
+    <line x1="24" y1="28" x2="24" y2="68" stroke="rgba(255,255,255,0.45)" stroke-width="0.8"/>
+    <line x1="14" y1="44" x2="34" y2="44" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+    <circle cx="24" cy="48" r="5" fill="#2EFAA3" opacity="0.4"/>
+    <circle cx="24" cy="48" r="2.5" fill="#FFF8C8" opacity="0.7"/>
+  </symbol>
+  <symbol id="lingyun-2" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly2-core" x1="24" y1="68" x2="24" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#B8860B"/><stop offset="50%" stop-color="#E8B020"/><stop offset="100%" stop-color="#FFE566"/></linearGradient>
+      <radialGradient id="ly2-glow" cx="24" cy="50" r="15"><stop offset="0%" stop-color="#2EFAA3" stop-opacity="0.35"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ly2-mist" x1="24" y1="28" x2="24" y2="4" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#F5D76E" stop-opacity="0.7"/><stop offset="100%" stop-color="#E8D5A8" stop-opacity="0.08"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#CCC" stroke="#1A1A2E" stroke-width="0.9" opacity="0.35"/>
+    <path d="M24 27 C21 23 23 17 24 12 C25 8 24 4 24 2" fill="none" stroke="url(#ly2-mist)" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="24" cy="50" rx="14" ry="16" fill="url(#ly2-glow)"/>
+    <polygon points="24,28 14,44 17,62 24,68 31,62 34,44" fill="url(#ly2-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="24" y1="28" x2="24" y2="68" stroke="rgba(255,255,255,0.3)" stroke-width="0.7"/>
+    <line x1="14" y1="44" x2="34" y2="44" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+    <circle cx="24" cy="48" r="4" fill="#4DD0E1" opacity="0.3"/>
+    <path d="M21 38 L23 46 L22 54" fill="none" stroke="#1A1A2E" stroke-width="1.2" stroke-linecap="round" opacity="0.75"/>
+  </symbol>
+  <symbol id="lingyun-1" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly1-core" x1="24" y1="68" x2="24" y2="34" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#A67C00"/><stop offset="100%" stop-color="#E8B020"/></linearGradient>
+      <radialGradient id="ly1-glow" cx="24" cy="52" r="12"><stop offset="0%" stop-color="#4DD0E1" stop-opacity="0.2"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ly1-mist" x1="24" y1="26" x2="24" y2="6" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E8D5A8" stop-opacity="0.45"/><stop offset="100%" stop-color="#E8D5A8" stop-opacity="0.05"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#CCC" stroke="#1A1A2E" stroke-width="0.9" opacity="0.3"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#CCC" stroke="#1A1A2E" stroke-width="0.9" opacity="0.3"/>
+    <path d="M24 26 C23 21 24 15 24 10 C24 6 24 3 24 2" fill="none" stroke="url(#ly1-mist)" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="24" cy="52" rx="12" ry="14" fill="url(#ly1-glow)"/>
+    <polygon points="24,30 15,44 18,60 24,66 30,60 33,44" fill="url(#ly1-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="24" y1="30" x2="24" y2="66" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+    <path d="M19 40 L21 48 L20 56" fill="none" stroke="#1A1A2E" stroke-width="1.1" stroke-linecap="round" opacity="0.8"/>
+    <path d="M29 42 L27 50 L28 58" fill="none" stroke="#1A1A2E" stroke-width="1.1" stroke-linecap="round" opacity="0.8"/>
+  </symbol>
+  <symbol id="lingyun-0" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly0-core" x1="24" y1="66" x2="24" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#777"/><stop offset="100%" stop-color="#BBB"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#DDD" stroke="#1A1A2E" stroke-width="0.8" opacity="0.2"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#DDD" stroke="#1A1A2E" stroke-width="0.8" opacity="0.2"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#DDD" stroke="#1A1A2E" stroke-width="0.8" opacity="0.2"/>
+    <path d="M24 24 L24 6" fill="none" stroke="#CCC" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 3" opacity="0.35"/>
+    <polygon points="24,32 16,44 18,58 24,64 30,58 32,44" fill="url(#ly0-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round" opacity="0.55"/>
+    <path d="M18 38 L20 46 L19 54 L21 60" fill="none" stroke="#1A1A2E" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M30 40 L28 48 L29 56 L27 62" fill="none" stroke="#1A1A2E" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M24 34 L23 42 L25 50 L24 58" fill="none" stroke="#1A1A2E" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
+    <line x1="20" y1="44" x2="28" y2="52" stroke="#1A1A2E" stroke-width="0.8" opacity="0.5"/>
+  </symbol>
+</svg>

@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI炼金 · Phase 0 核心业务流程</title>
+  <link rel="stylesheet" href="assets/css/prototype.css">
+</head>
+<body>
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <symbol id="icon-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="icon-paste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></symbol>
+  <symbol id="icon-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+  <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
+  <!-- 灵韵 · 能量水晶（烟雾化星 = 三次机会） -->
+  <symbol id="lingyun-3" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly3-core" x1="24" y1="68" x2="24" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#B8860B"/><stop offset="45%" stop-color="#F0C030"/><stop offset="100%" stop-color="#FFF8C8"/></linearGradient>
+      <linearGradient id="ly3-facet-l" x1="14" y1="40" x2="24" y2="55" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E8B020" stop-opacity="0.9"/><stop offset="100%" stop-color="#2EFAA3" stop-opacity="0.35"/></linearGradient>
+      <linearGradient id="ly3-facet-r" x1="34" y1="40" x2="24" y2="55" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#D4A017" stop-opacity="0.85"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0.3"/></linearGradient>
+      <radialGradient id="ly3-glow" cx="24" cy="50" r="18"><stop offset="0%" stop-color="#2EFAA3" stop-opacity="0.5"/><stop offset="60%" stop-color="#4DD0E1" stop-opacity="0.15"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ly3-mist" x1="24" y1="28" x2="24" y2="2" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#F5D76E" stop-opacity="0.9"/><stop offset="100%" stop-color="#E8D5A8" stop-opacity="0.1"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <path d="M24 27 C20 22 22 16 24 11 C26 6 24 3 24 1" fill="none" stroke="url(#ly3-mist)" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M24 27 C28 22 26 17 24 13" fill="none" stroke="url(#ly3-mist)" stroke-width="1.3" stroke-linecap="round" opacity="0.4"/>
+    <ellipse cx="24" cy="50" rx="16" ry="18" fill="url(#ly3-glow)"/>
+    <polygon points="24,28 14,44 17,62 24,68 31,62 34,44" fill="url(#ly3-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+    <polygon points="24,28 14,44 24,68" fill="url(#ly3-facet-l)" stroke="none" opacity="0.85"/>
+    <polygon points="24,28 34,44 24,68" fill="url(#ly3-facet-r)" stroke="none" opacity="0.75"/>
+    <line x1="24" y1="28" x2="24" y2="68" stroke="rgba(255,255,255,0.45)" stroke-width="0.8"/>
+    <line x1="14" y1="44" x2="34" y2="44" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
+    <circle cx="24" cy="48" r="5" fill="#2EFAA3" opacity="0.4"/>
+    <circle cx="24" cy="48" r="2.5" fill="#FFF8C8" opacity="0.7"/>
+  </symbol>
+  <symbol id="lingyun-2" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly2-core" x1="24" y1="68" x2="24" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#B8860B"/><stop offset="50%" stop-color="#E8B020"/><stop offset="100%" stop-color="#FFE566"/></linearGradient>
+      <radialGradient id="ly2-glow" cx="24" cy="50" r="15"><stop offset="0%" stop-color="#2EFAA3" stop-opacity="0.35"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ly2-mist" x1="24" y1="28" x2="24" y2="4" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#F5D76E" stop-opacity="0.7"/><stop offset="100%" stop-color="#E8D5A8" stop-opacity="0.08"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#CCC" stroke="#1A1A2E" stroke-width="0.9" opacity="0.35"/>
+    <path d="M24 27 C21 23 23 17 24 12 C25 8 24 4 24 2" fill="none" stroke="url(#ly2-mist)" stroke-width="2.2" stroke-linecap="round"/>
+    <ellipse cx="24" cy="50" rx="14" ry="16" fill="url(#ly2-glow)"/>
+    <polygon points="24,28 14,44 17,62 24,68 31,62 34,44" fill="url(#ly2-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="24" y1="28" x2="24" y2="68" stroke="rgba(255,255,255,0.3)" stroke-width="0.7"/>
+    <line x1="14" y1="44" x2="34" y2="44" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+    <circle cx="24" cy="48" r="4" fill="#4DD0E1" opacity="0.3"/>
+    <path d="M21 38 L23 46 L22 54" fill="none" stroke="#1A1A2E" stroke-width="1.2" stroke-linecap="round" opacity="0.75"/>
+  </symbol>
+  <symbol id="lingyun-1" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly1-core" x1="24" y1="68" x2="24" y2="34" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#A67C00"/><stop offset="100%" stop-color="#E8B020"/></linearGradient>
+      <radialGradient id="ly1-glow" cx="24" cy="52" r="12"><stop offset="0%" stop-color="#4DD0E1" stop-opacity="0.2"/><stop offset="100%" stop-color="#4DD0E1" stop-opacity="0"/></radialGradient>
+      <linearGradient id="ly1-mist" x1="24" y1="26" x2="24" y2="6" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#E8D5A8" stop-opacity="0.45"/><stop offset="100%" stop-color="#E8D5A8" stop-opacity="0.05"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#CCC" stroke="#1A1A2E" stroke-width="0.9" opacity="0.3"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#FFE566" stroke="#1A1A2E" stroke-width="0.9"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#CCC" stroke="#1A1A2E" stroke-width="0.9" opacity="0.3"/>
+    <path d="M24 26 C23 21 24 15 24 10 C24 6 24 3 24 2" fill="none" stroke="url(#ly1-mist)" stroke-width="1.8" stroke-linecap="round"/>
+    <ellipse cx="24" cy="52" rx="12" ry="14" fill="url(#ly1-glow)"/>
+    <polygon points="24,30 15,44 18,60 24,66 30,60 33,44" fill="url(#ly1-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="24" y1="30" x2="24" y2="66" stroke="rgba(255,255,255,0.2)" stroke-width="0.6"/>
+    <path d="M19 40 L21 48 L20 56" fill="none" stroke="#1A1A2E" stroke-width="1.1" stroke-linecap="round" opacity="0.8"/>
+    <path d="M29 42 L27 50 L28 58" fill="none" stroke="#1A1A2E" stroke-width="1.1" stroke-linecap="round" opacity="0.8"/>
+  </symbol>
+  <symbol id="lingyun-0" viewBox="0 0 48 76">
+    <defs>
+      <linearGradient id="ly0-core" x1="24" y1="66" x2="24" y2="38" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#777"/><stop offset="100%" stop-color="#BBB"/></linearGradient>
+    </defs>
+    <polygon points="11,7 12.4,11 16.5,11 13.2,13.6 14.6,17.5 11,15 7.4,17.5 8.8,13.6 5.5,11 9.6,11" fill="#DDD" stroke="#1A1A2E" stroke-width="0.8" opacity="0.2"/>
+    <polygon points="24,1 25.4,5 29.5,5 26.2,7.6 27.6,11.5 24,9 20.4,11.5 21.8,7.6 18.5,5 22.6,5" fill="#DDD" stroke="#1A1A2E" stroke-width="0.8" opacity="0.2"/>
+    <polygon points="37,7 38.4,11 42.5,11 39.2,13.6 40.6,17.5 37,15 33.4,17.5 34.8,13.6 31.5,11 35.6,11" fill="#DDD" stroke="#1A1A2E" stroke-width="0.8" opacity="0.2"/>
+    <path d="M24 24 L24 6" fill="none" stroke="#CCC" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="2 3" opacity="0.35"/>
+    <polygon points="24,32 16,44 18,58 24,64 30,58 32,44" fill="url(#ly0-core)" stroke="#1A1A2E" stroke-width="2" stroke-linejoin="round" opacity="0.55"/>
+    <path d="M18 38 L20 46 L19 54 L21 60" fill="none" stroke="#1A1A2E" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M30 40 L28 48 L29 56 L27 62" fill="none" stroke="#1A1A2E" stroke-width="1.2" stroke-linecap="round"/>
+    <path d="M24 34 L23 42 L25 50 L24 58" fill="none" stroke="#1A1A2E" stroke-width="1" stroke-linecap="round" opacity="0.85"/>
+    <line x1="20" y1="44" x2="28" y2="52" stroke="#1A1A2E" stroke-width="0.8" opacity="0.5"/>
+  </symbol>
+  <symbol id="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 13l4 4L19 7"/></symbol>
+  <symbol id="icon-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="icon-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+  <symbol id="icon-crystal" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="12,2 7,9 9,22 15,22 17,9"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="7" y1="9" x2="17" y2="9"/></symbol>
+  <symbol id="icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="icon-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="icon-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+  <symbol id="icon-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 00-4 12.74V17h8v-2.26A7 7 0 0012 2z"/></symbol>
+  <symbol id="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98"/></symbol>
+  <symbol id="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></symbol>
+  <symbol id="icon-wechat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8.5 11.5a1 1 0 100-2 1 1 0 000 2zM13.5 11.5a1 1 0 100-2 1 1 0 000 2z"/><path d="M17 14.5c1.5-1 2.5-2.6 2.5-4.5a6 6 0 00-11.3-2.8A5 5 0 003 14c0 2.2 1.5 4 3.5 5l-.5 2 2.5-1.2A7 7 0 0017 14.5z"/></symbol>
+  <symbol id="icon-moments" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="8" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="8" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10" r="1.2" fill="currentColor" stroke="none"/><circle cx="14" cy="14" r="1.2" fill="currentColor" stroke="none"/><circle cx="10" cy="14" r="1.2" fill="currentColor" stroke="none"/></symbol>
+</svg>
+
+<div class="proto-page">
+  <header class="proto-header">
+    <h1>AI炼金 · Phase 0 核心业务流程</h1>
+    <p>12 屏原型 · 输入页极简 + 答题灵韵 + 报告分享海报</p>
+  </header>
+
+  <div class="proto-grid">
+
+    <!-- ═══ 屏 1：输入页 · 空态 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 1 · 输入页 · 空态</div>
+      <div class="screen-sublabel">极简输入 + 轻量附件</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content">
+            <div class="input-simple">
+              <p class="input-simple-tagline">粘贴知识，炼成闯关题</p>
+              <div class="input-card">
+                <textarea class="input-card-textarea" placeholder="粘贴你想学习的知识…" readonly></textarea>
+                <div class="input-card-bar">
+                  <button class="input-add-btn" type="button" aria-label="添加附件" disabled>
+                    <svg><use href="#icon-plus"/></svg>
+                  </button>
+                  <span class="input-card-hint">文档·链接 即将上线</span>
+                  <span class="input-counter">0/5000</span>
+                  <button class="input-paste-link" type="button">粘贴</button>
+                </div>
+              </div>
+              <div class="input-cta-row">
+                <button class="btn-comic btn-primary">
+                  <svg width="20" height="20"><use href="#icon-crystal"/></svg>
+                  开始闯关
+                </button>
+              </div>
+            </div>
+
+            <div class="input-below">
+              <div class="input-examples-row">
+                <span class="input-examples-label">示例</span>
+                <span class="example-chip hot">Go 并发</span>
+                <span class="example-chip">量子力学</span>
+                <span class="example-chip">考研政治</span>
+              </div>
+              <div class="section-head">
+                <span class="section-head-title">最近炼成</span>
+                <span class="section-head-more">全部</span>
+              </div>
+              <div class="history-list">
+                <div class="history-item">
+                  <div class="history-score-ring good">80</div>
+                  <div class="history-info">
+                    <div class="history-title">Go 并发编程基础</div>
+                    <div class="history-meta">昨天 · 5 题</div>
+                  </div>
+                  <svg class="history-arrow"><use href="#icon-arrow-right"/></svg>
+                </div>
+                <div class="history-item">
+                  <div class="history-score-ring mid">60</div>
+                  <div class="history-info">
+                    <div class="history-title">线性代数 · 特征值</div>
+                    <div class="history-meta">3 天前 · 5 题</div>
+                  </div>
+                  <svg class="history-arrow"><use href="#icon-arrow-right"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 2：输入页 · 已输入 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 2 · 输入页 · 已输入</div>
+      <div class="screen-sublabel">128 字 · 可发起闯关</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content">
+            <div class="input-simple">
+              <p class="input-simple-tagline">开炼！</p>
+              <div class="input-card">
+                <textarea class="input-card-textarea" readonly>Go 语言中，goroutine 是轻量级线程，由 Go 运行时调度。channel 用于 goroutine 之间通信，遵循「不要通过共享内存来通信，而要通过通信来共享内存」的哲学。sync.Mutex 用于保护共享资源。</textarea>
+                <div class="input-card-bar">
+                  <button class="input-add-btn" type="button" aria-label="添加附件" disabled>
+                    <svg><use href="#icon-plus"/></svg>
+                  </button>
+                  <span class="input-card-hint">文档·链接 即将上线</span>
+                  <span class="input-counter">128/5000</span>
+                  <button class="input-paste-link" type="button">重贴</button>
+                </div>
+              </div>
+              <div class="input-cta-row">
+                <button class="btn-comic btn-primary">
+                  <svg width="20" height="20"><use href="#icon-crystal"/></svg>
+                  开始闯关
+                </button>
+              </div>
+            </div>
+
+            <div class="input-below">
+              <div class="input-examples-row">
+                <span class="input-examples-label">示例</span>
+                <span class="example-chip hot">Go 并发</span>
+                <span class="example-chip">量子力学</span>
+              </div>
+              <div class="section-head">
+                <span class="section-head-title">最近炼成</span>
+                <span class="section-head-more">全部</span>
+              </div>
+              <div class="history-list">
+                <div class="history-item">
+                  <div class="history-score-ring good">80</div>
+                  <div class="history-info">
+                    <div class="history-title">Go 并发编程基础</div>
+                    <div class="history-meta">昨天 · 5 题</div>
+                  </div>
+                  <svg class="history-arrow"><use href="#icon-arrow-right"/></svg>
+                </div>
+                <div class="history-item">
+                  <div class="history-score-ring mid">60</div>
+                  <div class="history-info">
+                    <div class="history-title">线性代数 · 特征值</div>
+                    <div class="history-meta">3 天前 · 5 题</div>
+                  </div>
+                  <svg class="history-arrow"><use href="#icon-arrow-right"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 3：输入页 · 校验失败 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 3 · 输入页 · 校验失败</div>
+      <div class="screen-sublabel">空内容点击闯关</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content">
+            <div class="input-simple">
+              <p class="input-simple-tagline">先写点啥吧</p>
+              <div class="error-toast">
+                <svg><use href="#icon-alert"/></svg>
+                <span>请输入学习内容</span>
+              </div>
+              <div class="input-card error">
+                <textarea class="input-card-textarea" placeholder="粘贴你想学习的知识…" readonly></textarea>
+                <div class="input-card-bar">
+                  <button class="input-add-btn" type="button" aria-label="添加附件" disabled>
+                    <svg><use href="#icon-plus"/></svg>
+                  </button>
+                  <span class="input-card-hint">文档·链接 即将上线</span>
+                  <span class="input-counter warn">0/5000</span>
+                  <button class="input-paste-link" type="button">粘贴</button>
+                </div>
+              </div>
+              <div class="input-cta-row">
+                <button class="btn-comic btn-disabled">
+                  <svg width="20" height="20"><use href="#icon-crystal"/></svg>
+                  开始闯关
+                </button>
+              </div>
+            </div>
+
+            <div class="input-below">
+              <div class="input-examples-row">
+                <span class="input-examples-label">试试</span>
+                <span class="example-chip hot">Go 并发</span>
+                <span class="example-chip">量子力学</span>
+                <span class="example-chip">考研政治</span>
+              </div>
+              <div class="section-head">
+                <span class="section-head-title">最近炼成</span>
+              </div>
+              <div class="history-list">
+                <div class="history-item">
+                  <div class="history-score-ring good">80</div>
+                  <div class="history-info">
+                    <div class="history-title">Go 并发编程基础</div>
+                    <div class="history-meta">昨天 · 5 题</div>
+                  </div>
+                  <svg class="history-arrow"><use href="#icon-arrow-right"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 4：AI 生成中 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 4 · AI 生成中</div>
+      <div class="screen-sublabel">LoadingAI · Task1+2 串行</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content" style="justify-content:center">
+            <div class="loading-center" style="flex:0;padding:var(--space-lg) 0">
+              <div class="loading-crystal">
+                <svg class="loading-crystal-svg" viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
+              </div>
+              <div class="loading-text">AI 正在准备关卡<span class="loading-dots"></span></div>
+              <div class="loading-progress">
+                <div class="loading-progress-bar"></div>
+              </div>
+              <div class="loading-sub">结构化知识 → 生成题目</div>
+            </div>
+
+            <div class="section-head" style="margin-top:var(--space-lg)">
+              <span class="section-head-title">本次素材</span>
+            </div>
+            <div class="report-card" style="font-size:0.75rem;margin-bottom:var(--space-md)">
+              Go 语言中，goroutine 是轻量级线程…（128 字）
+            </div>
+
+            <div class="loading-tips">
+              <div class="loading-tips-title">炼金小知识</div>
+              <div class="loading-tips-item active">每关 3–5 题，约 3–5 分钟完成</div>
+              <div class="loading-tips-item">答错散逸 1 缕灵韵，烟雾顶端三颗星代表三次机会</div>
+              <div class="loading-tips-item">通关后 AI 生成个性化复盘报告</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 5：AI 生成失败 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 5 · AI 生成失败</div>
+      <div class="screen-sublabel">503 超时 / 出题失败</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content">
+            <div class="fail-illust" style="padding-top:var(--space-xl)">
+              <div class="deco-exclaim">!</div>
+            </div>
+            <div class="fail-msg">知识解析失败<br>请精简内容后重试</div>
+
+            <div class="section-head">
+              <span class="section-head-title">可能的原因</span>
+            </div>
+            <div class="report-card" style="font-size:0.75rem;margin-bottom:var(--space-md)">
+              · 内容过长或格式杂乱<br>
+              · AI 响应超时（&gt;30s）<br>
+              · 网络连接不稳定
+            </div>
+
+            <div class="section-head">
+              <span class="section-head-title">建议操作</span>
+            </div>
+            <div class="history-list">
+              <div class="history-item" style="cursor:default">
+                <div class="history-score-ring" style="font-size:0.7rem;background:var(--marker-yellow)">1</div>
+                <div class="history-info">
+                  <div class="history-title">精简至 2,000 字以内</div>
+                  <div class="history-meta">去掉无关段落效果更好</div>
+                </div>
+              </div>
+              <div class="history-item" style="cursor:default">
+                <div class="history-score-ring" style="font-size:0.7rem;background:var(--marker-yellow)">2</div>
+                <div class="history-info">
+                  <div class="history-title">检查网络后重试</div>
+                  <div class="history-meta">单次完整闯关约 0.2–0.45 元</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="input-sticky-cta">
+              <button class="btn-comic btn-secondary" style="margin-bottom:var(--space-sm)">返回修改</button>
+              <button class="btn-comic btn-primary">重新尝试</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 6：答题页 · 作答中 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 6 · 答题页 · 作答中</div>
+      <div class="screen-sublabel">quiz/index · 单选题</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="quiz-header">
+            <div class="quiz-top-row">
+              <button class="app-bar-back" aria-label="返回"><svg><use href="#icon-back"/></svg></button>
+              <div class="quiz-topic">Go 并发编程基础</div>
+              <div class="lingyun-bar" aria-label="灵韵 3/3" title="炼金过程中精神的升华与消散">
+                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
+                <span class="lingyun-label">灵韵</span>
+              </div>
+            </div>
+            <div class="quiz-progress">
+              <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:60%"></div></div>
+              <span class="quiz-progress-text">第 3/5 题</span>
+            </div>
+          </div>
+          <div class="app-content" style="padding-top:0">
+            <div class="question-panel">
+              <span class="difficulty-tag medium">中等</span>
+              <div class="question-stem">Go 语言中，goroutine 的默认栈大小是多少？</div>
+            </div>
+            <div class="options-list">
+              <div class="option-item"><span class="option-key">A</span><span class="option-text">2 KB</span></div>
+              <div class="option-item selected"><span class="option-key">B</span><span class="option-text">8 KB</span></div>
+              <div class="option-item"><span class="option-key">C</span><span class="option-text">1 MB</span></div>
+              <div class="option-item"><span class="option-key">D</span><span class="option-text">2 MB</span></div>
+            </div>
+            <div class="quiz-footer">
+              <div class="concept-tags-row">
+                <span class="concept-tag">goroutine</span>
+                <span class="concept-tag">内存模型</span>
+              </div>
+              <div class="page-tip-bar">
+                <svg><use href="#icon-bulb"/></svg>
+                <p>单选题：点击选项后立即反馈，答错散逸 1 缕灵韵。本题考查 goroutine 栈的初始大小。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 7：答题页 · 答对 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 7 · 答题页 · 答对</div>
+      <div class="screen-sublabel">绿框反馈 + 讲解滑入</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="quiz-header">
+            <div class="quiz-top-row">
+              <button class="app-bar-back" aria-label="返回"><svg><use href="#icon-back"/></svg></button>
+              <div class="quiz-topic">Go 并发编程基础</div>
+              <div class="lingyun-bar" aria-label="灵韵 3/3">
+                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
+                <span class="lingyun-label">灵韵</span>
+              </div>
+            </div>
+            <div class="quiz-progress">
+              <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:60%"></div></div>
+              <span class="quiz-progress-text">第 3/5 题</span>
+            </div>
+          </div>
+          <div class="app-content" style="padding-top:0">
+            <div class="question-panel">
+              <span class="difficulty-tag medium">中等</span>
+              <div class="question-stem">Go 语言中，goroutine 的默认栈大小是多少？</div>
+            </div>
+            <div class="options-list">
+              <div class="option-item correct"><span class="option-key">A</span><span class="option-text">2 KB</span></div>
+              <div class="option-item"><span class="option-key">B</span><span class="option-text">8 KB</span></div>
+              <div class="option-item"><span class="option-key">C</span><span class="option-text">1 MB</span></div>
+              <div class="option-item"><span class="option-key">D</span><span class="option-text">2 MB</span></div>
+            </div>
+            <div class="explain-bubble">
+              <div class="explain-header correct">
+                <svg width="18" height="18"><use href="#icon-check"/></svg> 回答正确！
+              </div>
+              <div class="explain-body">goroutine 初始栈仅 2KB，远小于传统线程的 MB 级栈。Go 运行时会根据需要动态扩缩栈，这也是它能轻松创建成千上万个 goroutine 的原因。</div>
+            </div>
+            <button class="btn-comic btn-primary btn-sm" style="width:100%;margin-bottom:var(--space-sm)">
+              下一题 <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
+            </button>
+            <div class="page-tip-bar">
+              <svg><use href="#icon-clock"/></svg>
+              <p>剩余 2 题 · 当前正确率 100% · 保持连胜！</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 8：答题页 · 答错 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 8 · 答题页 · 答错</div>
+      <div class="screen-sublabel">红框 + 灵韵散逸 + 讲解</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="quiz-header">
+            <div class="quiz-top-row">
+              <button class="app-bar-back" aria-label="返回"><svg><use href="#icon-back"/></svg></button>
+              <div class="quiz-topic">Go 并发编程基础</div>
+              <div class="lingyun-bar" aria-label="灵韵 2/3">
+                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-2"/></svg>
+                <span class="lingyun-label">灵韵</span>
+                <span class="lingyun-count">2/3</span>
+              </div>
+            </div>
+            <div class="quiz-progress">
+              <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:60%"></div></div>
+              <span class="quiz-progress-text">第 3/5 题</span>
+            </div>
+          </div>
+          <div class="app-content" style="padding-top:0">
+            <div class="question-panel">
+              <span class="difficulty-tag medium">中等</span>
+              <div class="question-stem">Go 语言中，goroutine 的默认栈大小是多少？</div>
+            </div>
+            <div class="options-list">
+              <div class="option-item correct"><span class="option-key">A</span><span class="option-text">2 KB</span></div>
+              <div class="option-item wrong"><span class="option-key">B</span><span class="option-text">8 KB</span></div>
+              <div class="option-item"><span class="option-key">C</span><span class="option-text">1 MB</span></div>
+              <div class="option-item"><span class="option-key">D</span><span class="option-text">2 MB</span></div>
+            </div>
+            <div class="explain-bubble">
+              <div class="explain-header wrong">
+                <svg width="18" height="18"><use href="#icon-x"/></svg> 答错了，灵韵散逸 -1
+              </div>
+              <div class="explain-body">正确答案是 A：2 KB。很多人误以为 goroutine 栈和线程一样大，其实 Go 的栈从 2KB 起步，按需动态增长，这是高并发的关键设计。</div>
+            </div>
+            <button class="btn-comic btn-primary btn-sm" style="width:100%;margin-bottom:var(--space-sm)">
+              下一题 <svg width="16" height="16"><use href="#icon-arrow-right"/></svg>
+            </button>
+            <div class="page-tip-bar" style="border-color:var(--chalk-red);background:rgba(231,76,60,0.06)">
+              <svg style="color:var(--chalk-red)"><use href="#icon-alert"/></svg>
+              <p>水晶现裂痕，一颗星已消散。再错一次，灵韵继续散逸～</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 9：通关报告 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 9 · 通关报告</div>
+      <div class="screen-sublabel">report/index · status: completed</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content">
+            <div class="report-summary">
+              <div class="report-summary-main">
+                <div class="report-badge success">炼成成功！</div>
+                <div class="report-score">80<span class="report-score-unit">%</span></div>
+              </div>
+              <div class="report-summary-side">
+                <div class="report-stats">
+                  <span>用时 <strong>4分32秒</strong></span>
+                  <span>对 <strong>4</strong> · 错 <strong>1</strong></span>
+                </div>
+                <div class="report-compare">
+                  <span class="compare-pill up">比上次 +20%</span>
+                  <span class="compare-pill">本周第 3 次</span>
+                </div>
+              </div>
+            </div>
+            <div class="report-section">
+              <div class="report-section-title">薄弱知识点</div>
+              <div class="weak-tags">
+                <span class="weak-tag good">goroutine</span>
+                <span class="weak-tag partial">channel</span>
+                <span class="weak-tag weak">mutex</span>
+              </div>
+            </div>
+            <div class="report-section">
+              <div class="report-section-title">知识总结</div>
+              <div class="report-card">本次你掌握了 Go 并发三大核心：goroutine 轻量协程、channel 安全通信、Mutex 互斥锁。channel 的阻塞机制还需加强理解。</div>
+            </div>
+            <div class="report-section">
+              <div class="report-section-title">学习建议</div>
+              <div class="report-card">建议重点复习 channel 的发送/接收阻塞规则，动手写几个生产者-消费者示例加深记忆。</div>
+            </div>
+
+            <div class="section-head">
+              <span class="section-head-title">相关历史</span>
+            </div>
+            <div class="history-list" style="margin-bottom:var(--space-sm)">
+              <div class="history-item">
+                <div class="history-score-ring mid">60</div>
+                <div class="history-info">
+                  <div class="history-title">Go 并发 · 第一次</div>
+                  <div class="history-meta">3 天前 · 60%</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="report-actions">
+              <button class="btn-comic btn-amber" type="button">
+                <svg width="20" height="20"><use href="#icon-share"/></svg> 分享战绩
+              </button>
+              <button class="btn-comic btn-primary" type="button">
+                <svg width="20" height="20"><use href="#icon-crystal"/></svg> 再来一局
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 10：失败报告 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 10 · 失败报告</div>
+      <div class="screen-sublabel">灵韵散尽 · status: failed</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <div style="width:36px"></div>
+            <div class="app-bar-title">AI炼金</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content">
+            <div class="report-summary">
+              <div class="report-summary-main">
+                <div class="report-badge fail">灵韵散尽…</div>
+                <div class="report-score report-score--fail">40<span class="report-score-unit">%</span></div>
+              </div>
+              <div class="report-summary-side">
+                <div class="report-stats">
+                  <span>用时 <strong>2分18秒</strong></span>
+                  <span>对 <strong>2</strong> · 错 <strong>3</strong></span>
+                </div>
+                <div class="report-compare">
+                  <span class="compare-pill down">比上次 -20%</span>
+                  <span class="compare-pill">本周第 4 次</span>
+                </div>
+              </div>
+            </div>
+            <div class="lingyun-hero">
+              <div class="lingyun-bar lingyun-bar--lg lingyun-bar--depleted" aria-label="灵韵 0/3">
+                <svg class="lingyun-crystal" viewBox="0 0 48 76"><use href="#lingyun-0"/></svg>
+                <span class="lingyun-label">灵韵</span>
+              </div>
+              <span class="lingyun-hero-caption">晶碎星灭，精神的升华已消散殆尽</span>
+            </div>
+            <div class="report-section">
+              <div class="report-section-title">薄弱知识点</div>
+              <div class="weak-tags">
+                <span class="weak-tag weak">goroutine</span>
+                <span class="weak-tag weak">channel</span>
+                <span class="weak-tag partial">mutex</span>
+              </div>
+            </div>
+            <div class="report-section">
+              <div class="report-section-title">知识总结</div>
+              <div class="report-card">虽然灵韵散尽，但你已经接触了 Go 并发的基本概念。goroutine 栈大小和 channel 用法是本次最大薄弱点，重炼一次吧！</div>
+            </div>
+            <div class="report-section">
+              <div class="report-section-title">学习建议</div>
+              <div class="report-card">先回顾原文中关于 goroutine 和 channel 的段落，然后再来挑战一次，下次一定能炼成！</div>
+            </div>
+
+            <div class="section-head">
+              <span class="section-head-title">错题将自动收录</span>
+            </div>
+            <div class="history-list" style="margin-bottom:var(--space-sm)">
+              <div class="history-item" style="cursor:default">
+                <div class="history-score-ring low" style="font-size:0.65rem">错</div>
+                <div class="history-info">
+                  <div class="history-title">goroutine 默认栈大小？</div>
+                  <div class="history-meta">Phase 1 错题本功能</div>
+                </div>
+              </div>
+              <div class="history-item" style="cursor:default">
+                <div class="history-score-ring low" style="font-size:0.65rem">错</div>
+                <div class="history-info">
+                  <div class="history-title">channel 关闭后还能接收吗？</div>
+                  <div class="history-meta">Phase 1 错题本功能</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="report-actions">
+              <button class="btn-comic btn-amber" type="button">
+                <svg width="20" height="20"><use href="#icon-share"/></svg> 分享复盘
+              </button>
+              <button class="btn-comic btn-primary" type="button">
+                <svg width="20" height="20"><use href="#icon-crystal"/></svg> 再来一局
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 11：战绩海报预览 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 11 · 战绩海报预览</div>
+      <div class="screen-sublabel">report/share · 通关 · canvas 生成</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="app-bar">
+            <button class="app-bar-back" type="button" aria-label="返回">
+              <svg><use href="#icon-back"/></svg>
+            </button>
+            <div class="app-bar-title">分享战绩</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content poster-page">
+            <p class="poster-hint">海报已生成，可保存或分享</p>
+            <div class="share-poster share-poster--success">
+              <div class="share-poster-deco share-poster-deco--tl"></div>
+              <div class="share-poster-deco share-poster-deco--br">炼！</div>
+              <div class="share-poster-brand">AI炼金</div>
+              <div class="share-poster-badge success">炼成成功！</div>
+              <div class="share-poster-score">80<span>%</span></div>
+              <div class="share-poster-topic">Go 并发编程</div>
+              <div class="share-poster-stats">用时 4分32秒 · 对 4 错 1</div>
+              <div class="share-poster-tags">
+                <span class="weak-tag good">goroutine</span>
+                <span class="weak-tag partial">channel</span>
+                <span class="weak-tag weak">mutex</span>
+              </div>
+              <div class="share-poster-crystal" aria-hidden="true">
+                <svg viewBox="0 0 48 76"><use href="#lingyun-3"/></svg>
+              </div>
+              <div class="share-poster-footer">
+                <div class="share-poster-qr" aria-label="小程序码">
+                  <div class="qr-grid"></div>
+                </div>
+                <div class="share-poster-qr-text">
+                  <strong>扫码一起炼金</strong>
+                  <span>长按识别小程序码</span>
+                </div>
+              </div>
+            </div>
+            <div class="poster-actions">
+              <button class="btn-comic btn-secondary btn-sm" type="button">
+                <svg width="18" height="18"><use href="#icon-download"/></svg> 保存相册
+              </button>
+              <button class="btn-comic btn-amber btn-sm" type="button">
+                <svg width="18" height="18"><use href="#icon-share"/></svg> 分享海报
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ 屏 12：分享操作面板 ═══ -->
+    <div class="screen-card">
+      <div class="screen-label">屏 12 · 分享操作面板</div>
+      <div class="screen-sublabel">wx.showShareImageMenu · ActionSheet</div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen phone-screen--overlay">
+          <div class="app-bar">
+            <button class="app-bar-back" type="button" aria-label="返回">
+              <svg><use href="#icon-back"/></svg>
+            </button>
+            <div class="app-bar-title">分享战绩</div>
+            <div style="width:36px"></div>
+          </div>
+          <div class="app-content poster-page poster-page--dimmed">
+            <div class="share-poster share-poster--success share-poster--mini">
+              <div class="share-poster-brand">AI炼金</div>
+              <div class="share-poster-badge success">炼成成功！</div>
+              <div class="share-poster-score">80<span>%</span></div>
+              <div class="share-poster-topic">Go 并发编程</div>
+              <div class="share-poster-footer">
+                <div class="share-poster-qr"><div class="qr-grid"></div></div>
+                <div class="share-poster-qr-text">
+                  <strong>扫码一起炼金</strong>
+                  <span>长按识别小程序码</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="share-sheet">
+            <div class="share-sheet-handle"></div>
+            <div class="share-sheet-title">分享到</div>
+            <div class="share-sheet-grid">
+              <button class="share-sheet-item" type="button">
+                <span class="share-sheet-icon share-sheet-icon--save">
+                  <svg><use href="#icon-download"/></svg>
+                </span>
+                <span class="share-sheet-label">保存图片</span>
+              </button>
+              <button class="share-sheet-item" type="button">
+                <span class="share-sheet-icon share-sheet-icon--wechat">
+                  <svg><use href="#icon-wechat"/></svg>
+                </span>
+                <span class="share-sheet-label">发送好友</span>
+              </button>
+              <button class="share-sheet-item" type="button">
+                <span class="share-sheet-icon share-sheet-icon--moments">
+                  <svg><use href="#icon-moments"/></svg>
+                </span>
+                <span class="share-sheet-label">朋友圈</span>
+              </button>
+            </div>
+            <button class="share-sheet-cancel btn-comic" type="button">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

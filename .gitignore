@@ -1,0 +1,43 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Node.js (Taro / React)
+node_modules/
+dist/
+.taro/
+.npm
+*.log
+
+# Python (FastAPI)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Go
+bin/
+vendor/
+
+# Build & temp
+tmp/
+temp/
+*.tmp

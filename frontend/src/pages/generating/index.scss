@@ -1,0 +1,27 @@
+.loading-flask {
+  width: 72px;
+  height: 86px;
+  margin: 0 auto var(--space-md);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'%3E%3Cpath d='M12.5 38.5 L15 14.5 L25 14.5 L27.5 38.5 Q27.5 41.5 20 41.5 Q12.5 41.5 12.5 38.5 Z' fill='%232EFAA3'/%3E%3Cpath d='M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z' fill='none' stroke='%233D5A6C' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.loading-flask--animated {
+  animation: flask-bob 1.2s ease-in-out infinite;
+}
+
+@keyframes flask-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.material-preview {
+  font-size: 12px;
+}
+
+.loading-page {
+  display: flex;
+  flex-direction: column;
+}

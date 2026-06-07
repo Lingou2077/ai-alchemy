@@ -21,6 +21,7 @@ Desktop.ini
 node_modules/
 dist/
 .taro/
+.swc/
 .npm
 *.log
 

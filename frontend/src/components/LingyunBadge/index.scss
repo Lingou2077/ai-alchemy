@@ -1,0 +1,27 @@
+.flask-icon {
+  width: 40px;
+  height: 48px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.lingyun-badge-icon--flask-3 {
+  @extend .flask-icon;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'%3E%3Cpath d='M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z' fill='%232EFAA3' opacity='0.35' stroke='%233D5A6C' stroke-width='1.5'/%3E%3Cpath d='M16.5 1.5 H23.5 V11 H16.5 Z' fill='%23FFFFFF' stroke='%233D5A6C' stroke-width='1.4'/%3E%3C/svg%3E");
+}
+
+.lingyun-badge-icon--flask-2 {
+  @extend .flask-icon;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'%3E%3Cpath d='M13.5 38.5 L16 22 L24 22 L26.5 38.5 Q26.5 41.5 20 41.5 Q13.5 41.5 13.5 38.5 Z' fill='%232EFAA3'/%3E%3Cpath d='M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z' fill='none' stroke='%233D5A6C' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+.lingyun-badge-icon--flask-1 {
+  @extend .flask-icon;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'%3E%3Cpath d='M14.5 38.5 L17 29 L23 29 L25.5 38.5 Q25.5 41.5 20 41.5 Q14.5 41.5 14.5 38.5 Z' fill='%231BCB7A' opacity='0.55'/%3E%3Cpath d='M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z' fill='none' stroke='%233D5A6C' stroke-width='1.5'/%3E%3C/svg%3E");
+}
+
+.lingyun-badge-icon--flask-0 {
+  @extend .flask-icon;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 48'%3E%3Cpath d='M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z' fill='%23F0F2F5' stroke='%239AA5B1' stroke-width='1.5'/%3E%3C/svg%3E");
+}

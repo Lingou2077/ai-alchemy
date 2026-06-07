@@ -1,0 +1,49 @@
+@import './styles/design-tokens.css';
+@import './styles/comic.scss';
+
+page {
+  background: var(--paper-bg);
+  color: var(--ink-black);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.app-page {
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.app-content {
+  padding: var(--space-md);
+  padding-bottom: calc(var(--space-xl) + env(safe-area-inset-bottom));
+}
+
+.app-content--with-tab {
+  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+}
+
+.placeholder-page {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  text-align: center;
+}
+
+.placeholder-badge {
+  display: inline-flex;
+  padding: 6px 14px;
+  border: var(--border-comic);
+  border-radius: var(--radius-pill);
+  background: var(--marker-yellow);
+  box-shadow: var(--comic-shadow-sm);
+  font-weight: 700;
+}
+
+.placeholder-text {
+  color: var(--ink-muted);
+  line-height: 1.7;
+}

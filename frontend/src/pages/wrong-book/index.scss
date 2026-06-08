@@ -1,0 +1,10 @@
+.wrong-book-ring {
+  font-size: 0.65rem;
+}
+
+.wrong-book-stem {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

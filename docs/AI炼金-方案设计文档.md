@@ -251,7 +251,7 @@ POST /report/generate
 | 前端运行时 | Zustand | 当前题号、 hearts、选项状态 |
 | 前端持久化 | Taro.setStorage | current_session、quiz_history、wrong_questions |
 | 后端 Phase 0 | 内存 dict | session_id → 结构化知识 + 完整题目（含答案，防篡改） |
-| 后端 Phase 2 | PostgreSQL / 云数据库 | 用户历史、错题 |
+| 后端 Phase 2 | **MySQL 8.0+**（云托管 / 自建） | 用户、闯关历史、错题、经验成长 |
 
 ### 3.5 Phase 2 多模态解析（已选方案 D）
 

@@ -1,24 +1,56 @@
 import { Text, Textarea, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import MainTabBar from '@/components/MainTabBar'
-import { EXAMPLE_CHIPS, MAX_CONTENT_LENGTH, PLACEHOLDER_MESSAGE } from '@/constants'
+import { EXAMPLE_CHIPS, MAX_CONTENT_LENGTH } from '@/constants'
 import { loadHistoryItems } from '@/services/storage'
+import { fetchQuizHistory } from '@/services/userApi'
 import { useSessionStore } from '@/stores/sessionStore'
-import type { HistoryItem } from '@/types/session'
+import { useUserStore } from '@/stores/userStore'
+import type { HistoryItem, QuizHistoryItem } from '@/types/session'
+import { accuracyRingClass, formatRelativeTime } from '@/utils/formatTime'
 
 import './index.scss'
+
+function mapServerHistory(item: QuizHistoryItem): HistoryItem {
+  return {
+    sessionId: item.sessionId,
+    topic: item.topic,
+    accuracy: item.accuracy,
+    questionCount: item.questionCount,
+    finishedAt: new Date(item.finishedAt).getTime() || Date.now(),
+  }
+}
 
 export default function IndexPage() {
   const [content, setContent] = useState('')
   const [showError, setShowError] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const token = useUserStore((state) => state.token)
   const setSession = useSessionStore((state) => state.setSession)
 
+  const loadRecentHistory = useCallback(async () => {
+    if (token) {
+      try {
+        const result = await fetchQuizHistory(1, 2)
+        setHistory(result.items.map(mapServerHistory))
+        return
+      } catch {
+        // 登录态失效时回退本地历史
+      }
+    }
+    const localItems = await loadHistoryItems()
+    setHistory(localItems)
+  }, [token])
+
   useEffect(() => {
-    loadHistoryItems().then(setHistory)
-  }, [])
+    loadRecentHistory()
+  }, [loadRecentHistory])
+
+  Taro.useDidShow(() => {
+    loadRecentHistory()
+  })
 
   const count = content.length
   const tagline = useMemo(() => {
@@ -55,8 +87,18 @@ export default function IndexPage() {
     })
   }
 
-  const showPlaceholder = () => {
-    Taro.showToast({ title: PLACEHOLDER_MESSAGE, icon: 'none' })
+  const openHistoryList = () => {
+    if (token) {
+      Taro.navigateTo({ url: '/pages/history/index' })
+      return
+    }
+    Taro.showToast({ title: '登录后可查看云端历史', icon: 'none' })
+  }
+
+  const openHistoryDetail = (sessionId: string) => {
+    if (token) {
+      Taro.navigateTo({ url: `/pages/history-detail/index?sessionId=${encodeURIComponent(sessionId)}` })
+    }
   }
 
   return (
@@ -118,11 +160,11 @@ export default function IndexPage() {
           </View>
           <View className='section-head'>
             <Text className='section-head-title'>最近炼成</Text>
-            <Text className='section-head-more' onClick={showPlaceholder}>全部</Text>
+            <Text className='section-head-more' onClick={openHistoryList}>全部</Text>
           </View>
           <View className='history-list'>
             {history.length === 0 ? (
-              <View className='history-item history-item--empty' onClick={showPlaceholder}>
+              <View className='history-item history-item--empty'>
                 <View className='history-info'>
                   <View className='history-title'>暂无记录</View>
                   <View className='history-meta'>完成一次闯关后会出现在这里</View>
@@ -130,13 +172,19 @@ export default function IndexPage() {
               </View>
             ) : (
               history.slice(0, 2).map((item) => (
-                <View key={item.sessionId} className='history-item' onClick={showPlaceholder}>
-                  <View className={`history-score-ring ${item.accuracy >= 80 ? 'good' : item.accuracy >= 60 ? 'mid' : 'low'}`}>
+                <View
+                  key={item.sessionId}
+                  className='history-item'
+                  onClick={() => openHistoryDetail(item.sessionId)}
+                >
+                  <View className={`history-score-ring ${accuracyRingClass(item.accuracy)}`}>
                     {Math.round(item.accuracy)}
                   </View>
                   <View className='history-info'>
                     <View className='history-title'>{item.topic}</View>
-                    <View className='history-meta'>{item.questionCount} 题 · {Math.round(item.accuracy)}%</View>
+                    <View className='history-meta'>
+                      {formatRelativeTime(new Date(item.finishedAt).toISOString())} · {item.questionCount} 题
+                    </View>
                   </View>
                 </View>
               ))

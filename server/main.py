@@ -3,8 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from routers.answers import router as answers_router
+from routers.auth import router as auth_router
 from routers.questions import router as questions_router
 from routers.report import router as report_router
+from routers.users import router as users_router
 
 app = FastAPI(title="AI炼金 API", version="0.1.0")
 
@@ -20,6 +22,8 @@ app.add_middleware(
 app.include_router(questions_router)
 app.include_router(answers_router)
 app.include_router(report_router)
+app.include_router(auth_router)
+app.include_router(users_router)
 
 
 @app.get("/api/v1/health")

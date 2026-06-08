@@ -12,5 +12,12 @@ class Settings(BaseSettings):
     content_truncate_length: int = 4000
     ai_timeout_seconds: int = 30
 
+    database_url: str = ""
+    jwt_secret: str = "change-me"
+    jwt_expire_seconds: int = 604800
+    wechat_app_id: str = ""
+    wechat_app_secret: str = ""
+    dev_mock_login: bool = True
+
 
 settings = Settings()

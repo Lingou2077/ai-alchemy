@@ -1,5 +1,7 @@
-import { View } from '@tarojs/components'
+import { Image, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
+
+import { getTabIconSrc } from '@/components/MainTabBar/tabIcons'
 
 import './index.scss'
 
@@ -29,7 +31,11 @@ export default function MainTabBar({ active }: Props) {
           className={`tab-bar-item ${tab.key === active ? 'active' : ''}`}
           onClick={() => switchTab(tab.path, tab.key)}
         >
-          <View className={`tab-bar-icon tab-bar-icon--${tab.key}`} />
+          <Image
+            className='tab-bar-icon'
+            src={getTabIconSrc(tab.key, tab.key === active)}
+            mode='aspectFit'
+          />
           <View>{tab.label}</View>
         </View>
       ))}

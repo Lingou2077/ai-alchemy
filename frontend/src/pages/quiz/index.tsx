@@ -7,6 +7,7 @@ import { INITIAL_HEARTS } from '@/constants'
 import { checkAnswer, generateReport, mapReportResponse } from '@/services/api'
 import { appendHistoryItem, buildHistoryItem, saveCurrentSession } from '@/services/storage'
 import { useSessionStore } from '@/stores/sessionStore'
+import { useUserStore } from '@/stores/userStore'
 import type { AnswerRecord, Question } from '@/types/session'
 
 import './index.scss'
@@ -66,10 +67,18 @@ export default function QuizPage() {
     await persistSession(finishedSession)
 
     try {
-      const reportPayload = await generateReport(session.sessionId, nextAnswers)
+      const durationSec = Math.max(1, Math.floor((Date.now() - startedAt) / 1000))
+      const reportPayload = await generateReport(session.sessionId, nextAnswers, {
+        quizStatus: status,
+        durationSec,
+      })
       const report = mapReportResponse(reportPayload as unknown as Record<string, unknown>)
       setReport(report)
       await appendHistoryItem(buildHistoryItem(finishedSession, report))
+      const { token, refreshProfile } = useUserStore.getState()
+      if (token) {
+        refreshProfile().catch(() => undefined)
+      }
     } catch {
       const correctCount = nextAnswers.filter((item) => item.isCorrect).length
       const fallback = {

@@ -6,6 +6,7 @@
   "scripts": {
     "dev:frontend": "npm run dev:weapp --prefix frontend",
     "build:frontend": "npm run build:weapp --prefix frontend",
-    "dev:backend": "cd server && .venv\\Scripts\\uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+    "dev:backend": "cd server && .venv\\Scripts\\uvicorn main:app --reload --host 0.0.0.0 --port 8000",
+    "db:init": "cd server && .venv\\Scripts\\python scripts/init_database.py"
   }
 }

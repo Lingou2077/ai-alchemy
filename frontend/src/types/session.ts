@@ -50,6 +50,20 @@ export interface ConceptNode {
   relatedQuestionCount: number
 }
 
+export interface ReportStats {
+  compareLastAccuracy?: number | null
+  weeklyQuizIndex?: number | null
+  relatedHistory?: QuizHistoryItem[]
+}
+
+export interface ExpGain {
+  amount: number
+  leveledUp: boolean
+  newLevel: number
+  newTitle: string
+  levelBefore: number
+}
+
 export interface ReportData {
   sessionId: string
   topic: string
@@ -62,6 +76,41 @@ export interface ReportData {
   summary: string
   suggestion: string
   conceptMastery: ConceptNode[]
+  expGain?: ExpGain | null
+  stats?: ReportStats | null
+  syncFailed?: boolean
+}
+
+export interface QuizHistoryItem {
+  sessionId: string
+  topic: string
+  accuracy: number
+  questionCount: number
+  durationSec: number
+  status: 'completed' | 'failed'
+  finishedAt: string
+}
+
+export interface QuizHistoryDetail extends QuizHistoryItem {
+  summary?: string | null
+  suggestion?: string | null
+  weakPoints?: WeakPoint[]
+}
+
+export interface WrongQuestionItem {
+  id: number
+  questionId: string
+  topic: string
+  stem: string
+  difficulty: string
+  wrongCount: number
+  lastWrongAt: string
+}
+
+export interface WrongQuestionDetail extends WrongQuestionItem {
+  options: OptionItem[]
+  correctAnswer: string[]
+  explanation: string
 }
 
 export interface HistoryItem {

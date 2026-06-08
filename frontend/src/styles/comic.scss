@@ -341,20 +341,14 @@ page {
 }
 
 .tab-bar-item.active .tab-bar-icon {
-  background: var(--marker-yellow);
-  border: 1.5px solid var(--ink-black);
-  border-radius: 6px;
-  box-shadow: 1px 1px 0 var(--ink-black);
-  padding: 1px;
+  transform: scale(1.06);
 }
 
 .tab-bar-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: block;
   width: 22px;
   height: 22px;
-  border-radius: 6px;
+  transition: transform 0.15s ease;
 }
 
 /* ── 输入页 · 极简主输入区 ── */

@@ -1,31 +1,5 @@
-import Taro from '@tarojs/taro'
-
+import { request } from '@/services/http'
 import type { AnswerRecord, ReportData, SessionData } from '@/types/session'
-
-const API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:8000'
-
-interface ApiErrorBody {
-  detail?: string
-}
-
-async function request<T>(path: string, options: Taro.request.Option): Promise<T> {
-  const response = await Taro.request<T & ApiErrorBody>({
-    url: `${API_BASE_URL}${path}`,
-    timeout: 60000,
-    header: {
-      'Content-Type': 'application/json',
-      ...(options.header || {}),
-    },
-    ...options,
-  })
-
-  if (response.statusCode >= 400) {
-    const message = (response.data as ApiErrorBody)?.detail || '请求失败，请稍后重试'
-    throw new Error(message)
-  }
-
-  return response.data as T
-}
 
 export async function generateQuestions(content: string, questionsPerLevel = 5) {
   return request<{
@@ -63,7 +37,11 @@ export async function checkAnswer(sessionId: string, questionId: string, userAns
   })
 }
 
-export async function generateReport(sessionId: string, answers: AnswerRecord[]) {
+export async function generateReport(
+  sessionId: string,
+  answers: AnswerRecord[],
+  options?: { quizStatus?: 'completed' | 'failed'; durationSec?: number },
+) {
   return request<ReportData>(`/api/v1/report/generate`, {
     method: 'POST',
     data: {
@@ -74,6 +52,8 @@ export async function generateReport(sessionId: string, answers: AnswerRecord[])
         is_correct: item.isCorrect,
         time_spent: item.timeSpent,
       })),
+      quiz_status: options?.quizStatus,
+      duration_sec: options?.durationSec,
     },
   })
 }
@@ -107,6 +87,10 @@ export function mapGenerateResponseToSession(
 }
 
 export function mapReportResponse(payload: Record<string, unknown>): ReportData {
+  const expGainRaw = (payload.expGain ?? payload.exp_gain) as Record<string, unknown> | undefined
+  const statsRaw = (payload.stats ?? {}) as Record<string, unknown>
+  const relatedHistory = (statsRaw.relatedHistory ?? statsRaw.related_history ?? []) as Record<string, unknown>[]
+
   return {
     sessionId: String(payload.sessionId ?? payload.session_id ?? ''),
     topic: String(payload.topic ?? ''),
@@ -123,6 +107,41 @@ export function mapReportResponse(payload: Record<string, unknown>): ReportData 
     conceptMastery: (payload.conceptMastery as ReportData['conceptMastery']) ||
       (payload.concept_mastery as ReportData['conceptMastery']) ||
       [],
+    expGain: expGainRaw
+      ? {
+          amount: Number(expGainRaw.amount ?? 0),
+          leveledUp: Boolean(expGainRaw.leveledUp ?? expGainRaw.leveled_up),
+          newLevel: Number(expGainRaw.newLevel ?? expGainRaw.new_level ?? 1),
+          newTitle: String(expGainRaw.newTitle ?? expGainRaw.new_title ?? ''),
+          levelBefore: Number(expGainRaw.levelBefore ?? expGainRaw.level_before ?? 1),
+        }
+      : null,
+    stats: statsRaw
+      ? {
+          compareLastAccuracy:
+            statsRaw.compareLastAccuracy !== undefined
+              ? Number(statsRaw.compareLastAccuracy)
+              : statsRaw.compare_last_accuracy !== undefined
+                ? Number(statsRaw.compare_last_accuracy)
+                : null,
+          weeklyQuizIndex:
+            statsRaw.weeklyQuizIndex !== undefined
+              ? Number(statsRaw.weeklyQuizIndex)
+              : statsRaw.weekly_quiz_index !== undefined
+                ? Number(statsRaw.weekly_quiz_index)
+                : null,
+          relatedHistory: relatedHistory.map((item) => ({
+            sessionId: String(item.sessionId ?? item.session_id ?? ''),
+            topic: String(item.topic ?? ''),
+            accuracy: Number(item.accuracy ?? 0),
+            questionCount: Number(item.questionCount ?? item.question_count ?? 0),
+            durationSec: Number(item.durationSec ?? item.duration_sec ?? 0),
+            status: (item.status as 'completed' | 'failed') ?? 'completed',
+            finishedAt: String(item.finishedAt ?? item.finished_at ?? ''),
+          })),
+        }
+      : null,
+    syncFailed: Boolean(payload.syncFailed ?? payload.sync_failed),
   }
 }
 

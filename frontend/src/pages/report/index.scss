@@ -1,3 +1,40 @@
 .report-page .strong {
   font-weight: 700;
 }
+
+.report-exp-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-sm) var(--space-md);
+  background: linear-gradient(90deg, rgba(46, 250, 163, 0.15), rgba(77, 208, 225, 0.12));
+}
+
+.report-exp-amount {
+  font-family: var(--font-score);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--lab-purple);
+}
+
+.report-exp-level {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--spirit-green);
+}
+
+.report-sync-warn {
+  font-size: 0.75rem;
+  color: var(--ink-muted);
+  text-align: center;
+  margin-bottom: var(--space-sm);
+}
+
+.history-item--static {
+  cursor: default;
+}
+
+.report-related-section,
+.report-wrong-section {
+  margin-bottom: var(--space-sm);
+}

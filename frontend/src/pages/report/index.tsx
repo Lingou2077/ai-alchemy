@@ -1,18 +1,13 @@
 import { Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
+import { useEffect } from 'react'
 
 import LingyunBadge from '@/components/LingyunBadge'
-import { PLACEHOLDER_MESSAGE } from '@/constants'
 import { saveCurrentSession } from '@/services/storage'
 import { useSessionStore } from '@/stores/sessionStore'
+import { accuracyRingClass, formatDuration, formatRelativeTime } from '@/utils/formatTime'
 
 import './index.scss'
-
-function formatDuration(seconds: number) {
-  const minutes = Math.floor(seconds / 60)
-  const remain = seconds % 60
-  return minutes > 0 ? `${minutes}分${remain}秒` : `${remain}秒`
-}
 
 function masteryClass(name: string, report: NonNullable<ReturnType<typeof useSessionStore.getState>['report']>) {
   const node = report.conceptMastery.find((item) => item.name === name)
@@ -31,6 +26,16 @@ export default function ReportPage() {
     }
   })
 
+  useEffect(() => {
+    if (report?.expGain?.leveledUp) {
+      Taro.showModal({
+        title: '恭喜晋升！',
+        content: `你已升至 Lv.${report.expGain.newLevel} · ${report.expGain.newTitle}`,
+        showCancel: false,
+      })
+    }
+  }, [report?.expGain?.leveledUp, report?.expGain?.newLevel, report?.expGain?.newTitle])
+
   if (!session || !report) {
     return <View className='app-page' />
   }
@@ -40,14 +45,18 @@ export default function ReportPage() {
     ? report.weakPoints.map((item) => item.name)
     : session.levels.flatMap((level) => level.questions.flatMap((q) => q.conceptTags)).slice(0, 3)
 
-  const showSharePlaceholder = () => {
-    Taro.showToast({ title: PLACEHOLDER_MESSAGE, icon: 'none' })
-  }
+  const compareValue = report.stats?.compareLastAccuracy
+  const weeklyIndex = report.stats?.weeklyQuizIndex
+  const relatedHistory = report.stats?.relatedHistory ?? []
 
   const restart = async () => {
     resetFlow()
     await saveCurrentSession(null)
     Taro.redirectTo({ url: '/pages/index/index' })
+  }
+
+  const openHistoryDetail = (sessionId: string) => {
+    Taro.navigateTo({ url: `/pages/history-detail/index?sessionId=${encodeURIComponent(sessionId)}` })
   }
 
   return (
@@ -70,8 +79,33 @@ export default function ReportPage() {
               <Text>用时 <Text className='strong'>{formatDuration(report.duration)}</Text></Text>
               <Text>对 <Text className='strong'>{report.correctCount}</Text> · 错 <Text className='strong'>{report.wrongCount}</Text></Text>
             </View>
+            {(compareValue !== null && compareValue !== undefined) || weeklyIndex ? (
+              <View className='report-compare'>
+                {compareValue !== null && compareValue !== undefined && (
+                  <Text className={`compare-pill ${compareValue >= 0 ? 'up' : 'down'}`}>
+                    比上次 {compareValue >= 0 ? '+' : ''}{compareValue}%
+                  </Text>
+                )}
+                {weeklyIndex ? (
+                  <Text className='compare-pill'>本周第 {weeklyIndex} 次</Text>
+                ) : null}
+              </View>
+            ) : null}
           </View>
         </View>
+
+        {report.expGain && report.expGain.amount > 0 && (
+          <View className='report-exp-banner report-card'>
+            <Text className='report-exp-amount'>+{report.expGain.amount} EXP</Text>
+            {report.expGain.leveledUp && (
+              <Text className='report-exp-level'>晋升 Lv.{report.expGain.newLevel}</Text>
+            )}
+          </View>
+        )}
+
+        {report.syncFailed && (
+          <View className='report-sync-warn'>云端同步失败，报告已正常展示</View>
+        )}
 
         {failed && (
           <View className='lingyun-hero'>
@@ -98,26 +132,53 @@ export default function ReportPage() {
           <View className='report-card'>{report.suggestion}</View>
         </View>
 
+        {!failed && relatedHistory.length > 0 && (
+          <View className='report-related-section'>
+            <View className='section-head'>
+              <Text className='section-head-title'>相关历史</Text>
+            </View>
+            <View className='history-list'>
+              {relatedHistory.map((item) => (
+                <View
+                  key={item.sessionId}
+                  className='history-item'
+                  onClick={() => openHistoryDetail(item.sessionId)}
+                >
+                  <View className={`history-score-ring ${accuracyRingClass(item.accuracy)}`}>
+                    {Math.round(item.accuracy)}
+                  </View>
+                  <View className='history-info'>
+                    <View className='history-title'>{item.topic}</View>
+                    <View className='history-meta'>
+                      {formatRelativeTime(item.finishedAt)} · {Math.round(item.accuracy)}%
+                    </View>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
         {failed && (
-          <>
+          <View className='report-wrong-section'>
             <View className='section-head'>
               <Text className='section-head-title'>错题将自动收录</Text>
             </View>
             <View className='history-list'>
-              {session.answers.filter((item) => !item.isCorrect).slice(0, 2).map((item) => {
+              {session.answers.filter((item) => !item.isCorrect).map((item) => {
                 const question = session.levels.flatMap((level) => level.questions).find((q) => q.id === item.questionId)
                 return (
-                  <View key={item.questionId} className='history-item'>
+                  <View key={item.questionId} className='history-item history-item--static'>
                     <View className='history-score-ring low'>错</View>
                     <View className='history-info'>
                       <View className='history-title'>{question?.stem || item.questionId}</View>
-                      <View className='history-meta'>Phase 1 错题本功能</View>
+                      <View className='history-meta'>已收录至错题本</View>
                     </View>
                   </View>
                 )
               })}
             </View>
-          </>
+          </View>
         )}
 
         <View className='report-actions'>

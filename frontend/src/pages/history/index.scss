@@ -1,0 +1,18 @@
+.sub-page {
+  padding-top: var(--space-sm);
+}
+
+.sub-page-empty {
+  text-align: center;
+  padding: var(--space-xl) var(--space-md);
+}
+
+.sub-page-empty-title {
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+
+.sub-page-empty-desc {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}

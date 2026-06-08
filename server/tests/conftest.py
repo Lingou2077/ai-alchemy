@@ -1,10 +1,44 @@
-import pytest
-from httpx import ASGITransport, AsyncClient
+import os
+from collections.abc import AsyncGenerator, Generator
+from pathlib import Path
+from urllib.parse import urlparse, urlunparse
 
-from main import app
-from schemas.knowledge import Concept, StructuredKnowledge
-from schemas.question import Level, Option, Question, QuestionSet
-from services.session_store import session_store
+import pytest
+from dotenv import load_dotenv
+from httpx import ASGITransport, AsyncClient
+from sqlalchemy.orm import Session
+
+SERVER_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(SERVER_DIR / ".env")
+
+
+def _to_test_database_url(url: str) -> str:
+    parsed = urlparse(url)
+    path = parsed.path.rstrip("/")
+    if path.endswith("/ai_alchemy_test") or path.endswith("ai_alchemy_test"):
+        return url
+    if path.endswith("/ai_alchemy") or path.endswith("ai_alchemy"):
+        new_path = f"{path}_test"
+        return urlunparse(parsed._replace(path=new_path))
+    return url
+
+
+database_url = os.getenv("DATABASE_URL", "")
+if database_url:
+    os.environ["DATABASE_URL"] = _to_test_database_url(database_url)
+
+os.environ["DEV_MOCK_LOGIN"] = "true"
+os.environ.setdefault("JWT_SECRET", "test-jwt-secret")
+
+from db.models.exp_log import ExpLog  # noqa: E402
+from db.models.quiz_record import QuizRecord  # noqa: E402
+from db.models.user import User  # noqa: E402
+from db.models.wrong_question import WrongQuestion  # noqa: E402
+from db.session import get_db, get_engine  # noqa: E402
+from main import app  # noqa: E402
+from schemas.knowledge import Concept, StructuredKnowledge  # noqa: E402
+from schemas.question import Level, Option, Question, QuestionSet  # noqa: E402
+from services.session_store import session_store  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
@@ -12,6 +46,46 @@ def clear_sessions():
     session_store.clear()
     yield
     session_store.clear()
+
+
+@pytest.fixture
+def db_session() -> Generator[Session, None, None]:
+    engine = get_engine()
+    connection = engine.connect()
+    transaction = connection.begin()
+    session = Session(bind=connection, join_transaction_mode="create_savepoint")
+    yield session
+    session.close()
+    transaction.rollback()
+    connection.close()
+
+
+@pytest.fixture
+async def client(db_session: Session) -> AsyncGenerator[AsyncClient, None]:
+    def override_get_db() -> Generator[Session, None, None]:
+        yield db_session
+
+    app.dependency_overrides[get_db] = override_get_db
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
+        yield ac
+    db_session.query(ExpLog).delete()
+    db_session.query(WrongQuestion).delete()
+    db_session.query(QuizRecord).delete()
+    db_session.query(User).delete()
+    db_session.commit()
+    app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def sample_user_factory(db_session: Session):
+    def _factory(exp: int = 0, openid: str = "factory-user") -> User:
+        user = User(openid=openid, exp=exp, level=1, title="见习炼金师")
+        db_session.add(user)
+        db_session.flush()
+        return user
+
+    return _factory
 
 
 @pytest.fixture
@@ -69,10 +143,3 @@ def sample_question_set() -> QuestionSet:
         ),
     ]
     return QuestionSet(levels=[Level(level_index=1, questions=questions)])
-
-
-@pytest.fixture
-async def client():
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac

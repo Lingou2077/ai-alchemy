@@ -22,6 +22,7 @@ export const INITIAL_HEARTS = 3
 export const STORAGE_KEYS = {
   currentSession: 'current_session',
   quizHistory: 'quiz_history',
+  authToken: 'auth_token',
 } as const
 
 export const PLACEHOLDER_MESSAGE = '即将上线，敬请期待'

@@ -9,8 +9,9 @@ from schemas.question import QuestionSet
 def build_question_chain(
     model: BaseChatModel | None = None,
     structured_runner: Runnable | None = None,
+    prompt_file: str = "question.txt",
 ):
-    system_prompt = load_prompt("question.txt")
+    system_prompt = load_prompt(prompt_file)
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),

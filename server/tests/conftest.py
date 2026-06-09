@@ -1,6 +1,7 @@
 import os
 from collections.abc import AsyncGenerator, Generator
 from pathlib import Path
+from unittest.mock import patch
 from urllib.parse import urlparse, urlunparse
 
 import pytest
@@ -31,6 +32,7 @@ os.environ["DEV_MOCK_LOGIN"] = "true"
 os.environ.setdefault("JWT_SECRET", "test-jwt-secret")
 
 from db.models.exp_log import ExpLog  # noqa: E402
+from db.models.generation_task import GenerationTask  # noqa: E402
 from db.models.quiz_record import QuizRecord  # noqa: E402
 from db.models.user import User  # noqa: E402
 from db.models.wrong_question import WrongQuestion  # noqa: E402
@@ -38,14 +40,16 @@ from db.session import get_db, get_engine  # noqa: E402
 from main import app  # noqa: E402
 from schemas.knowledge import Concept, StructuredKnowledge  # noqa: E402
 from schemas.question import Level, Option, Question, QuestionSet  # noqa: E402
-from services.session_store import session_store  # noqa: E402
+from services.session_store import research_store, session_store  # noqa: E402
 
 
 @pytest.fixture(autouse=True)
 def clear_sessions():
     session_store.clear()
+    research_store.clear()
     yield
     session_store.clear()
+    research_store.clear()
 
 
 @pytest.fixture
@@ -65,13 +69,22 @@ async def client(db_session: Session) -> AsyncGenerator[AsyncClient, None]:
     def override_get_db() -> Generator[Session, None, None]:
         yield db_session
 
+    class _SharedSessionFactory:
+        def __call__(self) -> Session:
+            return db_session
+
+    def override_session_factory() -> _SharedSessionFactory:
+        return _SharedSessionFactory()
+
     app.dependency_overrides[get_db] = override_get_db
     transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as ac:
-        yield ac
+    with patch("services.generation_task_service.get_session_factory", override_session_factory):
+        async with AsyncClient(transport=transport, base_url="http://test") as ac:
+            yield ac
     db_session.query(ExpLog).delete()
     db_session.query(WrongQuestion).delete()
     db_session.query(QuizRecord).delete()
+    db_session.query(GenerationTask).delete()
     db_session.query(User).delete()
     db_session.commit()
     app.dependency_overrides.clear()

@@ -21,5 +21,14 @@ class Settings(BaseSettings):
     upload_dir: str = "uploads"
     public_base_url: str = "http://127.0.0.1:8000"
 
+    tavily_api_key: str = ""
+    tavily_mock: bool = False
+    research_agent_max_tool_calls: int = 4
+    research_agent_timeout_seconds: int = 45
+    tavily_search_max_results: int = 8
+    tavily_search_default_depth: str = "advanced"
+    research_session_ttl_seconds: int = 1800
+    generation_task_ttl_seconds: int = 3600
+
 
 settings = Settings()

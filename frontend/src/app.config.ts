@@ -8,6 +8,7 @@ export default defineAppConfig({
     'pages/wrong-book/index',
     'pages/wrong-book-detail/index',
     'pages/generating/index',
+    'pages/topic-confirm/index',
     'pages/generate-fail/index',
     'pages/quiz/index',
     'pages/report/index',

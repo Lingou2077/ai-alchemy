@@ -4,12 +4,12 @@ import pytest
 
 from schemas.knowledge import StructuredKnowledge
 from schemas.question import QuestionSet
+from services.content_utils import normalize_content
 from services.question_pipeline import (
     build_generate_response,
     check_answer,
     compute_report_stats,
     find_question,
-    normalize_content,
 )
 from services.session_store import session_store
 
@@ -63,20 +63,31 @@ def test_compute_report_stats():
 @pytest.mark.asyncio
 async def test_generate_questions_api(client, sample_knowledge, sample_question_set):
     with patch(
-        "routers.questions.run_question_pipeline",
+        "services.generation_task_service.run_question_pipeline",
         new=AsyncMock(
-            return_value=("sid-1", sample_knowledge, sample_question_set, False)
+            return_value=("sid-1", sample_knowledge, sample_question_set, False, False)
         ),
     ):
-        response = await client.post(
+        create_response = await client.post(
             "/api/v1/questions/generate",
             json={"content": "Go 并发", "questions_per_level": 5},
         )
-    assert response.status_code == 200
-    data = response.json()
-    assert data["session_id"] == "sid-1"
-    assert data["topic"] == sample_knowledge.topic
-    assert "answer" not in str(data)
+    assert create_response.status_code == 200
+    task_id = create_response.json()["task_id"]
+    assert task_id
+
+    for _ in range(20):
+        poll_response = await client.get(f"/api/v1/questions/generate/{task_id}")
+        assert poll_response.status_code == 200
+        payload = poll_response.json()
+        if payload["status"] == "done":
+            assert payload["result"]["session_id"] == "sid-1"
+            assert payload["result"]["topic"] == sample_knowledge.topic
+            assert "answer" not in str(payload)
+            return
+        if payload["status"] == "failed":
+            pytest.fail(payload.get("error_message") or "task failed")
+    pytest.fail("generate task did not finish in time")
 
 
 @pytest.mark.asyncio

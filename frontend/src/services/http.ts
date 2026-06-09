@@ -3,6 +3,8 @@ import Taro from '@tarojs/taro'
 import { loadAuthToken } from '@/services/authStorage'
 
 const API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:8000'
+export const DEFAULT_REQUEST_TIMEOUT_MS = 60000
+export const POLL_REQUEST_TIMEOUT_MS = 15000
 
 interface ApiErrorBody {
   detail?: string
@@ -18,11 +20,12 @@ export async function request<T>(
   path: string,
   options: Taro.request.Option,
   retryOn401 = true,
+  timeout = DEFAULT_REQUEST_TIMEOUT_MS,
 ): Promise<T> {
   const authHeader = await getAuthHeader()
   const response = await Taro.request<T & ApiErrorBody>({
     url: `${API_BASE_URL}${path}`,
-    timeout: 60000,
+    timeout,
     header: {
       'Content-Type': 'application/json',
       ...authHeader,
@@ -35,7 +38,7 @@ export async function request<T>(
     const { useUserStore } = await import('@/stores/userStore')
     const relogged = await useUserStore.getState().login()
     if (relogged) {
-      return request<T>(path, options, false)
+      return request<T>(path, options, false, timeout)
     }
   }
 
@@ -45,4 +48,10 @@ export async function request<T>(
   }
 
   return response.data as T
+}
+
+export function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms)
+  })
 }

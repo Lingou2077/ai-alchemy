@@ -26,6 +26,7 @@ function mapServerHistory(item: QuizHistoryItem): HistoryItem {
 
 export default function IndexPage() {
   const [content, setContent] = useState('')
+  const [webResearchEnabled, setWebResearchEnabled] = useState(false)
   const [showError, setShowError] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
   const token = useUserStore((state) => state.token)
@@ -82,14 +83,23 @@ export default function IndexPage() {
     setShowError(false)
   }
 
-  const handleStart = () => {
+  const handleStart = async () => {
     if (!content.trim()) {
       setShowError(true)
       return
     }
     setSession(null)
+    const trimmed = content.trim()
+
+    if (!webResearchEnabled) {
+      Taro.navigateTo({
+        url: `/pages/generating/index?content=${encodeURIComponent(trimmed)}`,
+      })
+      return
+    }
+
     Taro.navigateTo({
-      url: `/pages/generating/index?content=${encodeURIComponent(content.trim())}`,
+      url: `/pages/generating/index?mode=research&content=${encodeURIComponent(trimmed)}`,
     })
   }
 
@@ -125,21 +135,36 @@ export default function IndexPage() {
               className='input-card-textarea'
               value={content}
               maxlength={MAX_CONTENT_LENGTH}
-              placeholder='粘贴你想学习的知识…'
+              placeholder='粘贴关键词、网页链接或学习材料…'
               onInput={(event) => {
                 setContent(event.detail.value)
                 if (event.detail.value.trim()) setShowError(false)
               }}
             />
             <View className='input-card-bar'>
-              <View className='input-add-btn disabled'>+</View>
-              <Text className='input-card-hint'>文档·链接 即将上线</Text>
-              <Text className={`input-counter ${showError ? 'warn' : ''}`}>{count}/{MAX_CONTENT_LENGTH}</Text>
-              <Text className='input-paste-link' onClick={handlePaste}>
-                {count > 0 ? '重贴' : '粘贴'}
-              </Text>
+              <View className='input-card-bar-left'>
+                <View
+                  className='web-research-inline'
+                  onClick={() => setWebResearchEnabled((prev) => !prev)}
+                >
+                  <View className={`web-research-switch ${webResearchEnabled ? 'on' : ''}`}>
+                    <View className='web-research-knob' />
+                  </View>
+                  <Text className='web-research-title'>联网搜索</Text>
+                </View>
+              </View>
+              <View className='input-card-bar-center'>
+                <View className='input-add-btn disabled'>+</View>
+              </View>
+              <View className='input-card-bar-actions'>
+                <Text className={`input-counter ${showError ? 'warn' : ''}`}>{count}/{MAX_CONTENT_LENGTH}</Text>
+                <Text className='input-paste-link' onClick={handlePaste}>
+                  {count > 0 ? '重贴' : '粘贴'}
+                </Text>
+              </View>
             </View>
           </View>
+
           <View className='input-cta-row'>
             <View
               className={`btn-comic ${content.trim() ? 'btn-primary' : 'btn-disabled'}`}

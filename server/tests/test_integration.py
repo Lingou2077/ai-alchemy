@@ -1,8 +1,9 @@
+import asyncio
 from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from schemas.report import ConceptNode, ReportData, WeakPoint
+from schemas.report import ConceptNode, ReportData
 from services.session_store import session_store
 
 
@@ -31,23 +32,33 @@ async def test_end_to_end_quiz_flow(client, sample_knowledge, sample_question_se
         ],
     )
 
-    async def fake_question_pipeline(content, count):
+    async def fake_question_pipeline(content, count, **kwargs):
         session_store.create("sid-flow", content, sample_knowledge, sample_question_set)
-        return ("sid-flow", sample_knowledge, sample_question_set, False)
+        return ("sid-flow", sample_knowledge, sample_question_set, False, False)
 
     with patch(
-        "routers.questions.run_question_pipeline",
+        "services.generation_task_service.run_question_pipeline",
         new=AsyncMock(side_effect=fake_question_pipeline),
     ), patch(
         "routers.report.run_report_pipeline",
         new=AsyncMock(return_value=fake_report),
     ):
-        generate = await client.post(
+        create = await client.post(
             "/api/v1/questions/generate",
             json={"content": "Go 并发内容", "questions_per_level": 5},
         )
-        assert generate.status_code == 200
-        session_id = generate.json()["session_id"]
+        assert create.status_code == 200
+        task_id = create.json()["task_id"]
+
+        session_id = None
+        for _ in range(20):
+            poll = await client.get(f"/api/v1/questions/generate/{task_id}")
+            payload = poll.json()
+            if payload["status"] == "done":
+                session_id = payload["result"]["session_id"]
+                break
+            await asyncio.sleep(0.05)
+        assert session_id == "sid-flow"
 
         check = await client.post(
             "/api/v1/answers/check",

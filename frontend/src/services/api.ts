@@ -1,29 +1,166 @@
-import { request } from '@/services/http'
+import { POLL_REQUEST_TIMEOUT_MS, request, sleep } from '@/services/http'
+import type { ResearchResponse } from '@/types/research'
 import type { AnswerRecord, ReportData, SessionData } from '@/types/session'
 
-export async function generateQuestions(content: string, questionsPerLevel = 5) {
-  return request<{
-    session_id: string
-    topic: string
-    levels: Array<{
-      level_index: number
-      questions: Array<{
-        id: string
-        type: 'single' | 'multiple' | 'boolean'
-        difficulty: 'easy' | 'medium' | 'hard'
-        stem: string
-        options: Array<{ key: string; text: string }>
-        conceptTags?: string[]
-      }>
-    }>
-    truncated?: boolean
-  }>(`/api/v1/questions/generate`, {
-    method: 'POST',
-    data: {
-      content,
-      questions_per_level: questionsPerLevel,
+const POLL_INTERVAL_MS = 8000
+const POLL_TIMEOUT_MS = 5 * 60 * 1000
+
+export type TaskStatus = 'pending' | 'running' | 'done' | 'failed'
+export type TaskStep =
+  | 'pending'
+  | 'research'
+  | 'topic_candidates'
+  | 'knowledge'
+  | 'questions'
+  | 'done'
+  | 'failed'
+
+interface TaskCreatedPayload {
+  task_id: string
+  status: TaskStatus
+}
+
+interface TaskStatusPayload<T> {
+  task_id: string
+  status: TaskStatus
+  step: TaskStep
+  progress_message?: string | null
+  error_message?: string | null
+  result?: T
+}
+
+function readTaskId(payload: Record<string, unknown>): string {
+  const taskId = payload.task_id ?? payload.taskId
+  if (!taskId) {
+    throw new Error('未获取到任务 ID，请重新尝试')
+  }
+  return String(taskId)
+}
+
+function mapResearchResponse(payload: Record<string, unknown>): ResearchResponse {
+  const candidates = (payload.candidates as Record<string, unknown>[] | undefined) || []
+  return {
+    researchSessionId: String(payload.research_session_id ?? payload.researchSessionId ?? ''),
+    candidates: candidates.map((item) => ({
+      id: String(item.id ?? ''),
+      title: String(item.title ?? ''),
+      summary: String(item.summary ?? ''),
+      sourceUrls: (item.source_urls as string[] | undefined) || (item.sourceUrls as string[] | undefined) || [],
+    })),
+    inputKind: (payload.input_kind ?? payload.inputKind ?? 'keyword') as ResearchResponse['inputKind'],
+    degradedMode: (payload.degraded_mode ?? payload.degradedMode ?? 'none') as ResearchResponse['degradedMode'],
+    mockMode: Boolean(payload.mock_mode ?? payload.mockMode),
+    degradedMessage: (payload.degraded_message ?? payload.degradedMessage ?? null) as string | null,
+  }
+}
+
+function mapGenerateResult(payload: Record<string, unknown>) {
+  return {
+    session_id: String(payload.session_id ?? ''),
+    topic: String(payload.topic ?? ''),
+    levels: ((payload.levels as Record<string, unknown>[]) || []).map((level) => ({
+      level_index: Number(level.level_index ?? 0),
+      questions: ((level.questions as Record<string, unknown>[]) || []).map((question) => ({
+        id: String(question.id ?? ''),
+        type: question.type as 'single' | 'multiple' | 'boolean',
+        difficulty: question.difficulty as 'easy' | 'medium' | 'hard',
+        stem: String(question.stem ?? ''),
+        options: (question.options as Array<{ key: string; text: string }>) || [],
+        conceptTags: (question.conceptTags as string[] | undefined) || (question.concept_tags as string[] | undefined) || [],
+      })),
+    })),
+    truncated: Boolean(payload.truncated),
+    grounded: Boolean(payload.grounded),
+  }
+}
+
+async function pollTaskUntilDone<T>(
+  pollFn: () => Promise<TaskStatusPayload<T>>,
+  onProgress?: (step: TaskStep, message?: string | null) => void,
+): Promise<T> {
+  const startedAt = Date.now()
+  while (Date.now() - startedAt < POLL_TIMEOUT_MS) {
+    const status = await pollFn()
+    onProgress?.(status.step, status.progress_message)
+    if (status.status === 'done' && status.result) {
+      return status.result
+    }
+    if (status.status === 'failed') {
+      throw new Error(status.error_message || '任务失败，请稍后重试')
+    }
+    await sleep(POLL_INTERVAL_MS)
+  }
+  throw new Error('处理超时，请稍后重试')
+}
+
+export async function startResearchTask(content: string) {
+  const payload = await request<Record<string, unknown>>(
+    `/api/v1/questions/research`,
+    { method: 'POST', data: { content } },
+    true,
+    POLL_REQUEST_TIMEOUT_MS,
+  )
+  return readTaskId(payload)
+}
+
+export async function pollResearchTask(taskId: string) {
+  return request<TaskStatusPayload<Record<string, unknown>>>(
+    `/api/v1/questions/research/${encodeURIComponent(taskId)}`,
+    { method: 'GET' },
+    true,
+    POLL_REQUEST_TIMEOUT_MS,
+  )
+}
+
+export async function researchTopics(content: string, onProgress?: (step: TaskStep, message?: string | null) => void) {
+  const taskId = await startResearchTask(content)
+  const result = await pollTaskUntilDone(() => pollResearchTask(taskId), onProgress)
+  return mapResearchResponse(result)
+}
+
+export async function startGenerateTask(
+  content: string,
+  questionsPerLevel = 5,
+  options?: { researchSessionId?: string; selectedTopicId?: string },
+) {
+  const payload = await request<Record<string, unknown>>(
+    `/api/v1/questions/generate`,
+    {
+      method: 'POST',
+      data: {
+        content,
+        questions_per_level: questionsPerLevel,
+        research_session_id: options?.researchSessionId,
+        selected_topic_id: options?.selectedTopicId,
+      },
     },
-  })
+    true,
+    POLL_REQUEST_TIMEOUT_MS,
+  )
+  return readTaskId(payload)
+}
+
+export async function pollGenerateTask(taskId: string) {
+  return request<TaskStatusPayload<Record<string, unknown>>>(
+    `/api/v1/questions/generate/${encodeURIComponent(taskId)}`,
+    { method: 'GET' },
+    true,
+    POLL_REQUEST_TIMEOUT_MS,
+  )
+}
+
+export async function generateQuestions(
+  content: string,
+  questionsPerLevel = 5,
+  options?: {
+    researchSessionId?: string
+    selectedTopicId?: string
+    onProgress?: (step: TaskStep, message?: string | null) => void
+  },
+) {
+  const taskId = await startGenerateTask(content, questionsPerLevel, options)
+  const result = await pollTaskUntilDone(() => pollGenerateTask(taskId), options?.onProgress)
+  return mapGenerateResult(result)
 }
 
 export async function checkAnswer(sessionId: string, questionId: string, userAnswer: string[]) {

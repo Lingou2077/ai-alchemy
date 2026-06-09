@@ -10,6 +10,7 @@ import { useSessionStore } from '@/stores/sessionStore'
 import { useUserStore } from '@/stores/userStore'
 import type { AnswerRecord, Question } from '@/types/session'
 import { computeAnswerDurationSec } from '@/utils/formatTime'
+import { switchMainTab } from '@/utils/mainTab'
 
 import './index.scss'
 
@@ -66,7 +67,7 @@ export default function QuizPage() {
 
   Taro.useDidShow(() => {
     if (!session) {
-      Taro.redirectTo({ url: '/pages/index/index' })
+      switchMainTab('home')
     }
   })
 
@@ -259,7 +260,7 @@ export default function QuizPage() {
           <View className='app-bar-back' onClick={() => Taro.showModal({
             title: '确认离开',
             content: '离开后将保留当前进度，确定返回吗？',
-            success: (res) => res.confirm && Taro.redirectTo({ url: '/pages/index/index' }),
+            success: (res) => res.confirm && switchMainTab('home'),
           })}
           >
             ←

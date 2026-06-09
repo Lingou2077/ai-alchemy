@@ -150,7 +150,7 @@ def main() -> int:
     finally:
         connection.close()
 
-    expected_tables = {"users", "quiz_records", "wrong_questions", "exp_logs"}
+    expected_tables = {"users", "quiz_records", "wrong_questions", "exp_logs", "generation_tasks"}
 
     for database in DATABASES:
         print(f"在库 `{database}` 执行建表脚本 ({len(table_sql_files)} 个文件) ...")

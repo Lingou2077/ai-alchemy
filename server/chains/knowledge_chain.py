@@ -28,12 +28,14 @@ def create_chat_model() -> ChatOpenAI:
 def build_knowledge_chain(
     model: BaseChatModel | None = None,
     structured_runner: Runnable | None = None,
+    prompt_file: str = "knowledge.txt",
+    human_template: str = "学习材料：\n{content}",
 ):
-    system_prompt = load_prompt("knowledge.txt")
+    system_prompt = load_prompt(prompt_file)
     prompt = ChatPromptTemplate.from_messages(
         [
             ("system", system_prompt),
-            ("human", "学习材料：\n{content}"),
+            ("human", human_template),
         ]
     )
     runner = structured_runner or (model or create_chat_model()).with_structured_output(

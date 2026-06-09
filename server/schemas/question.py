@@ -60,6 +60,8 @@ class QuestionSet(BaseModel):
 class GenerateQuestionsRequest(BaseModel):
     content: str = Field(max_length=5000)
     questions_per_level: int = Field(default=5, ge=3, le=10)
+    research_session_id: str | None = None
+    selected_topic_id: str | None = None
 
 
 class GenerateQuestionsResponse(BaseModel):
@@ -67,6 +69,7 @@ class GenerateQuestionsResponse(BaseModel):
     topic: str
     levels: list[LevelPublic]
     truncated: bool = False
+    grounded: bool = False
 
 
 class CheckAnswerRequest(BaseModel):

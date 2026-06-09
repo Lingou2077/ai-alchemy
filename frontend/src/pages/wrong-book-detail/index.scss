@@ -13,12 +13,13 @@
 
 .wrong-detail-topic {
   font-weight: 700;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
 }
 
 .wrong-detail-count {
   font-size: 0.75rem;
-  color: var(--ink-muted);
+  color: var(--text-secondary);
 }
 
 .wrong-detail-options {
@@ -31,21 +32,23 @@
   display: flex;
   gap: var(--space-sm);
   align-items: flex-start;
-  padding: var(--space-sm) var(--space-md);
-  border: var(--border-comic);
-  border-radius: var(--radius-md);
-  background: #fff;
-  box-shadow: var(--comic-shadow-sm);
-  font-size: 0.85rem;
+  padding: 14px var(--space-md);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-xs);
+  font-size: 0.875rem;
   line-height: 1.5;
+  color: var(--text-primary);
 }
 
 .wrong-detail-option.correct {
-  background: rgba(46, 204, 113, 0.12);
-  border-color: var(--spirit-green);
+  background: var(--accent-green-light);
+  border-color: var(--accent-green);
 }
 
 .wrong-detail-option-key {
   font-weight: 700;
   min-width: 1.2rem;
+  color: var(--accent-purple);
 }

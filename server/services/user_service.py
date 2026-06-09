@@ -54,6 +54,8 @@ def update_user_profile(db: Session, user: User, nickname: str | None, avatar_ur
         cleaned = avatar_url.strip()
         if len(cleaned) > 512:
             raise ValueError("头像地址过长")
+        if cleaned.startswith(("wxfile://", "file://", "http://tmp/", "https://tmp/")):
+            raise ValueError("请使用头像上传接口设置头像")
         user.avatar_url = cleaned
 
     level, title = level_for_exp(user.exp)

@@ -1,3 +1,4 @@
+import logging
 import uuid
 from typing import Any
 
@@ -17,6 +18,16 @@ from schemas.question import (
 )
 from schemas.report import AnswerRecord, GenerateReportRequest, ReportData
 from services.session_store import session_store
+
+logger = logging.getLogger(__name__)
+
+_RETRY_ATTEMPTS = 2
+
+
+def _step_failure_detail(step_name: str) -> str:
+    if step_name == "知识解析":
+        return "知识解析失败，请精简内容后重试"
+    return f"{step_name}失败，请重试"
 
 
 def normalize_content(content: str) -> tuple[str, bool]:
@@ -51,12 +62,23 @@ def check_answer(question: Question, user_answer: list[str]) -> bool:
 
 async def invoke_with_retry(chain, payload: dict[str, Any], step_name: str):
     last_error: Exception | None = None
-    for _ in range(2):
+    for attempt in range(1, _RETRY_ATTEMPTS + 1):
         try:
-            return await chain.ainvoke(payload)
+            result = await chain.ainvoke(payload)
+            if result is not None:
+                return result
+            logger.warning("%s returned None (attempt %d/%d)", step_name, attempt, _RETRY_ATTEMPTS)
         except Exception as exc:  # noqa: BLE001 - retry boundary
             last_error = exc
-    raise HTTPException(status_code=503, detail=f"{step_name}失败，请重试") from last_error
+            logger.warning(
+                "%s raised %s (attempt %d/%d): %s",
+                step_name,
+                type(exc).__name__,
+                attempt,
+                _RETRY_ATTEMPTS,
+                exc,
+            )
+    raise HTTPException(status_code=503, detail=_step_failure_detail(step_name)) from last_error
 
 
 async def run_question_pipeline(content: str, count: int) -> tuple[str, StructuredKnowledge, QuestionSet, bool]:
@@ -130,6 +152,8 @@ async def run_report_pipeline(request: GenerateReportRequest) -> ReportData:
         raise HTTPException(status_code=404, detail="会话不存在或已过期")
 
     accuracy, total, correct, wrong, duration = compute_report_stats(request.answers)
+    if request.duration_sec is not None and request.duration_sec > 0:
+        duration = request.duration_sec
     report_chain = build_report_chain()
     report = await invoke_with_retry(
         report_chain,

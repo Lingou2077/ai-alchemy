@@ -9,7 +9,8 @@ import { fetchQuizHistory } from '@/services/userApi'
 import { useSessionStore } from '@/stores/sessionStore'
 import { useUserStore } from '@/stores/userStore'
 import type { HistoryItem, QuizHistoryItem } from '@/types/session'
-import { accuracyRingClass, formatRelativeTime } from '@/utils/formatTime'
+import { accuracyRingClass, accuracyRingProgressStyle, formatRelativeTime } from '@/utils/formatTime'
+import { switchMainTab } from '@/utils/mainTab'
 
 import './index.scss'
 
@@ -28,6 +29,7 @@ export default function IndexPage() {
   const [showError, setShowError] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
   const token = useUserStore((state) => state.token)
+  const user = useUserStore((state) => state.user)
   const setSession = useSessionStore((state) => state.setSession)
 
   const loadRecentHistory = useCallback(async () => {
@@ -50,6 +52,10 @@ export default function IndexPage() {
 
   Taro.useDidShow(() => {
     loadRecentHistory()
+    const { token: authToken, refreshProfile } = useUserStore.getState()
+    if (authToken) {
+      refreshProfile().catch(() => undefined)
+    }
   })
 
   const count = content.length
@@ -88,11 +94,7 @@ export default function IndexPage() {
   }
 
   const openHistoryList = () => {
-    if (token) {
-      Taro.navigateTo({ url: '/pages/history/index' })
-      return
-    }
-    Taro.showToast({ title: '登录后可查看云端历史', icon: 'none' })
+    switchMainTab('bank')
   }
 
   const openHistoryDetail = (sessionId: string) => {
@@ -106,7 +108,10 @@ export default function IndexPage() {
       <View className='app-content app-content--with-tab'>
         <View className='home-header'>
           <View className='home-brand'>AI炼金</View>
-          <View className='home-tagline'>{tagline}</View>
+          <View className='home-header-row'>
+            <View className='home-tagline'>{tagline}</View>
+            {user?.title ? <View className='home-user-title'>{user.title}</View> : null}
+          </View>
         </View>
 
         <View className='input-simple'>
@@ -158,7 +163,7 @@ export default function IndexPage() {
               </Text>
             ))}
           </View>
-          <View className='section-head'>
+          <View className='home-header-row home-recent-head'>
             <Text className='section-head-title'>最近炼成</Text>
             <Text className='section-head-more' onClick={openHistoryList}>全部</Text>
           </View>
@@ -177,7 +182,10 @@ export default function IndexPage() {
                   className='history-item'
                   onClick={() => openHistoryDetail(item.sessionId)}
                 >
-                  <View className={`history-score-ring ${accuracyRingClass(item.accuracy)}`}>
+                  <View
+                    className={`history-score-ring history-score-ring--progress ${accuracyRingClass(item.accuracy)}`}
+                    style={accuracyRingProgressStyle(item.accuracy)}
+                  >
                     {Math.round(item.accuracy)}
                   </View>
                   <View className='history-info'>

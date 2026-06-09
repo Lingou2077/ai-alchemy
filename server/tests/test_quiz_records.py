@@ -184,6 +184,36 @@ async def test_compare_last_accuracy(client: AsyncClient, sample_knowledge, samp
 
 
 @pytest.mark.asyncio
+async def test_delete_history_record(client: AsyncClient, sample_knowledge, sample_question_set):
+    session_store.create("sid-del", "text", sample_knowledge, sample_question_set)
+    token = await login(client, "mock-delete-history")
+
+    await post_report(client, "sid-del", token)
+
+    deleted = await client.delete(
+        "/api/v1/users/me/history/sid-del",
+        headers=auth_headers(token),
+    )
+    assert deleted.status_code == 204
+
+    history = await client.get("/api/v1/users/me/history", headers=auth_headers(token))
+    assert history.json()["total"] == 0
+
+    me = await client.get("/api/v1/users/me", headers=auth_headers(token))
+    assert me.json()["totalQuizzes"] == 0
+
+
+@pytest.mark.asyncio
+async def test_delete_history_not_found(client: AsyncClient):
+    token = await login(client, "mock-delete-missing")
+    response = await client.delete(
+        "/api/v1/users/me/history/missing-session",
+        headers=auth_headers(token),
+    )
+    assert response.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_unauthenticated_report_skips_sync(client: AsyncClient, sample_knowledge, sample_question_set):
     session_store.create("sid-anon", "text", sample_knowledge, sample_question_set)
     body = await post_report(client, "sid-anon", token=None)

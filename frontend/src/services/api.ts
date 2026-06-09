@@ -98,7 +98,7 @@ export function mapReportResponse(payload: Record<string, unknown>): ReportData 
     totalQuestions: Number(payload.totalQuestions ?? payload.total_questions ?? 0),
     correctCount: Number(payload.correctCount ?? payload.correct_count ?? 0),
     wrongCount: Number(payload.wrongCount ?? payload.wrong_count ?? 0),
-    duration: Number(payload.duration ?? 0),
+    duration: Number(payload.duration ?? payload.duration_sec ?? payload.durationSec ?? 0),
     weakPoints: (payload.weakPoints as ReportData['weakPoints']) ||
       (payload.weak_points as ReportData['weakPoints']) ||
       [],

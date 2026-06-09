@@ -1,3 +1,6 @@
+import Taro from '@tarojs/taro'
+
+import { loadAuthToken } from '@/services/authStorage'
 import { request } from '@/services/http'
 import type {
   QuizHistoryDetail,
@@ -6,6 +9,8 @@ import type {
   WrongQuestionItem,
 } from '@/types/session'
 import type { LoginResponse, UpdateProfilePayload, UserProfile, UserStats } from '@/types/user'
+
+const API_BASE_URL = process.env.API_BASE_URL || 'http://127.0.0.1:8000'
 
 function mapUserProfile(payload: Record<string, unknown>): UserProfile {
   const expProgress = (payload.expProgress ?? payload.exp_progress ?? {}) as Record<string, unknown>
@@ -33,6 +38,10 @@ function mapUserProfile(payload: Record<string, unknown>): UserProfile {
   }
 }
 
+function isLocalAvatarPath(url: string): boolean {
+  return /^(wxfile:\/\/|file:\/\/|https?:\/\/tmp\/)/.test(url)
+}
+
 export async function loginWithCode(code: string) {
   const payload = await request<Record<string, unknown>>(
     `/api/v1/auth/login`,
@@ -53,6 +62,38 @@ export async function fetchCurrentUser() {
   return mapUserProfile(payload)
 }
 
+export async function uploadAvatar(filePath: string) {
+  const token = await loadAuthToken()
+  const response = await Taro.uploadFile({
+    url: `${API_BASE_URL}/api/v1/users/me/avatar`,
+    filePath,
+    name: 'file',
+    header: token ? { Authorization: `Bearer ${token}` } : {},
+  })
+
+  if (response.statusCode === 401 && token) {
+    const { useUserStore } = await import('@/stores/userStore')
+    const relogged = await useUserStore.getState().login()
+    if (relogged) {
+      return uploadAvatar(filePath)
+    }
+  }
+
+  if (response.statusCode >= 400) {
+    let message = '头像上传失败'
+    try {
+      const body = JSON.parse(response.data) as { detail?: string }
+      message = body.detail || message
+    } catch {
+      // ignore parse error
+    }
+    throw new Error(message)
+  }
+
+  const payload = JSON.parse(response.data) as Record<string, unknown>
+  return mapUserProfile(payload)
+}
+
 export async function updateProfile(data: UpdateProfilePayload) {
   const payload = await request<Record<string, unknown>>(`/api/v1/users/me`, {
     method: 'PATCH',
@@ -62,6 +103,13 @@ export async function updateProfile(data: UpdateProfilePayload) {
     },
   })
   return mapUserProfile(payload)
+}
+
+export async function persistAvatar(avatarUrl: string) {
+  if (isLocalAvatarPath(avatarUrl)) {
+    return uploadAvatar(avatarUrl)
+  }
+  return updateProfile({ avatarUrl })
 }
 
 function mapHistoryItem(payload: Record<string, unknown>): QuizHistoryItem {
@@ -98,6 +146,13 @@ export async function fetchQuizHistory(page = 1, limit = 20) {
     page: Number(payload.page ?? page),
     limit: Number(payload.limit ?? limit),
   }
+}
+
+export async function deleteQuizHistory(sessionId: string) {
+  await request<Record<string, never>>(
+    `/api/v1/users/me/history/${encodeURIComponent(sessionId)}`,
+    { method: 'DELETE' },
+  )
 }
 
 export async function fetchQuizHistoryDetail(sessionId: string) {
@@ -152,4 +207,12 @@ export async function fetchWrongQuestionDetail(id: number) {
     correctAnswer: (payload.correctAnswer as string[]) ?? (payload.correct_answer as string[]) ?? [],
     explanation: String(payload.explanation ?? ''),
   } satisfies WrongQuestionDetail
+}
+
+export function resolveAvatarSrc(avatarUrl: string): string {
+  if (!avatarUrl) return ''
+  if (avatarUrl.startsWith('/uploads/')) {
+    return `${API_BASE_URL}${avatarUrl}`
+  }
+  return avatarUrl
 }

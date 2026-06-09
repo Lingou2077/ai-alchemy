@@ -2,8 +2,8 @@
 @import './styles/comic.scss';
 
 page {
-  background: var(--paper-bg);
-  color: var(--ink-black);
+  background: var(--bg-page);
+  color: var(--text-primary);
   font-family: var(--font-body);
   min-height: 100vh;
 }
@@ -11,6 +11,7 @@ page {
 .app-page {
   min-height: 100vh;
   box-sizing: border-box;
+  background: var(--bg-page);
 }
 
 .app-content {
@@ -19,7 +20,7 @@ page {
 }
 
 .app-content--with-tab {
-  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  padding-bottom: calc(58px + env(safe-area-inset-bottom));
 }
 
 .placeholder-page {
@@ -35,15 +36,18 @@ page {
 
 .placeholder-badge {
   display: inline-flex;
-  padding: 6px 14px;
-  border: var(--border-comic);
+  padding: 6px 16px;
+  border: none;
   border-radius: var(--radius-pill);
-  background: var(--marker-yellow);
-  box-shadow: var(--comic-shadow-sm);
+  background: var(--accent-purple-light);
+  color: var(--accent-purple);
+  box-shadow: var(--shadow-xs);
   font-weight: 700;
+  font-size: 0.8125rem;
 }
 
 .placeholder-text {
-  color: var(--ink-muted);
+  color: var(--text-secondary);
   line-height: 1.7;
+  font-size: 0.875rem;
 }

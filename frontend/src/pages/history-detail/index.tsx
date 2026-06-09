@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 
 import { fetchQuizHistoryDetail } from '@/services/userApi'
 import type { QuizHistoryDetail } from '@/types/session'
+import { switchMainTab } from '@/utils/mainTab'
 import { formatDuration, formatRelativeTime } from '@/utils/formatTime'
 
 import '../history/index.scss'
@@ -17,7 +18,7 @@ export default function HistoryDetailPage() {
 
   useEffect(() => {
     if (!sessionId) {
-      Taro.redirectTo({ url: '/pages/history/index' })
+      switchMainTab('bank')
       return
     }
     fetchQuizHistoryDetail(sessionId)

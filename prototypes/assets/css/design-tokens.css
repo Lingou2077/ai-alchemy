@@ -1,47 +1,62 @@
-/* AI炼金 · 阿衰风设计令牌 */
+/* AI炼金 · Soft UI 设计令牌（参考 QuizUp 风格） */
 :root {
-  /* 纸感背景 */
-  --paper-bg: #fff8e7;
-  --paper-line: rgba(26, 26, 46, 0.06);
-  --paper-margin: rgba(231, 76, 60, 0.25);
+  /* 背景与表面 */
+  --bg-page: #F8F9FE;
+  --bg-surface: #FFFFFF;
+  --bg-muted: #F0F2F8;
+  --bg-input: #F5F6FA;
 
-  /* 墨线与文字 */
-  --ink-black: #1a1a2e;
-  --ink-muted: #5c5c7a;
-  --ink-light: #8a8aa3;
+  /* 文字 */
+  --text-primary: #3D4A61;
+  --text-secondary: #A0AEC0;
+  --text-muted: #C5CDD9;
+  --text-inverse: #FFFFFF;
+
+  /* 主色 · 紫色 */
+  --accent-purple: #7B61FF;
+  --accent-purple-light: #EDE9FF;
+  --accent-purple-dark: #6B4FE0;
 
   /* 功能色 */
-  --chalk-green: #2ecc71;
-  --chalk-green-dark: #27ae60;
-  --chalk-red: #e74c3c;
-  --chalk-red-dark: #c0392b;
-  --marker-yellow: #ffe066;
-  --marker-yellow-dark: #f1c40f;
-  --pencil-blue: #3498db;
-  --lab-purple: #9b59b6;
-  /* 灵韵 · 炼金色系 */
-  --amber-gold: #d4a017;
-  --amber-light: #f5d76e;
-  --spirit-green: #2efaa3;
-  --spirit-blue: #4dd0e1;
-  --lingyun-star: #ffe566;
+  --accent-blue: #5B9BF5;
+  --accent-blue-light: #E8F2FF;
+  --accent-coral: #FF8A65;
+  --accent-coral-light: #FFF0EB;
+  --accent-green: #4CD964;
+  --accent-green-light: #E8FAEC;
+  --accent-green-dark: #34C759;
+  --accent-yellow: #FFD166;
+  --accent-yellow-light: #FFF8E6;
+  --accent-red: #FF6B6B;
+  --accent-red-light: #FFE8E8;
+  --accent-red-dark: #E85555;
+  --accent-orange: #FF9F43;
 
-  /* 漫画硬阴影 */
-  --comic-shadow: 4px 4px 0 var(--ink-black);
-  --comic-shadow-sm: 2px 2px 0 var(--ink-black);
-  --comic-shadow-lg: 6px 6px 0 var(--ink-black);
-  --border-comic: 2.5px solid var(--ink-black);
+  /* 灵韵 · 保留炼金瓶色系但柔化 */
+  --spirit-green: #4CD964;
+  --spirit-blue: #5B9BF5;
+  --amber-gold: #FFD166;
 
-  /* 圆角 */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  /* 阴影 · 柔和深度 */
+  --shadow-xs: 0 2px 8px rgba(61, 74, 97, 0.04);
+  --shadow-sm: 0 4px 16px rgba(61, 74, 97, 0.06);
+  --shadow-md: 0 8px 24px rgba(61, 74, 97, 0.08);
+  --shadow-lg: 0 12px 40px rgba(61, 74, 97, 0.10);
+  --shadow-card: 0 4px 20px rgba(123, 97, 255, 0.08);
+  --shadow-purple: 0 6px 20px rgba(123, 97, 255, 0.25);
+
+  /* 圆角 · 大圆角 soft UI */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 28px;
   --radius-pill: 999px;
 
   /* 字体 */
-  --font-display: 'ZCOOL KuaiLe', 'Ma Shan Zheng', cursive;
-  --font-body: 'Noto Sans SC', 'PingFang SC', sans-serif;
-  --font-score: 'Bebas Neue', 'Impact', sans-serif;
+  --font-display: 'Nunito', 'Quicksand', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  --font-body: 'Nunito', 'Quicksand', 'PingFang SC', 'Noto Sans SC', sans-serif;
+  --font-score: 'Nunito', 'Quicksand', sans-serif;
 
   /* 间距 */
   --space-xs: 4px;
@@ -55,4 +70,18 @@
   --phone-height: 812px;
   --safe-top: 44px;
   --safe-bottom: 34px;
+
+  /* 兼容旧变量名（HTML 内联 style 引用） */
+  --paper-bg: var(--bg-page);
+  --paper-line: rgba(61, 74, 97, 0.06);
+  --ink-black: var(--text-primary);
+  --ink-muted: var(--text-secondary);
+  --ink-light: var(--text-muted);
+  --marker-yellow: var(--accent-yellow);
+  --chalk-green: var(--accent-green);
+  --chalk-green-dark: var(--accent-green-dark);
+  --chalk-red: var(--accent-red);
+  --chalk-red-dark: var(--accent-red-dark);
+  --pencil-blue: var(--accent-blue);
+  --lab-purple: var(--accent-purple);
 }

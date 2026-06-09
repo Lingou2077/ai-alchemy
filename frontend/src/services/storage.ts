@@ -35,6 +35,12 @@ export async function loadHistoryItems(): Promise<HistoryItem[]> {
   }
 }
 
+export async function removeHistoryItem(sessionId: string) {
+  const existing = await loadHistoryItems()
+  const next = existing.filter((entry) => entry.sessionId !== sessionId)
+  await Taro.setStorage({ key: STORAGE_KEYS.quizHistory, data: next })
+}
+
 export function buildHistoryItem(session: SessionData, report: ReportData): HistoryItem {
   const questionCount = session.levels.reduce((sum, level) => sum + level.questions.length, 0)
   return {

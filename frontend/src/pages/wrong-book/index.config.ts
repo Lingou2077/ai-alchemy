@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '错题本',
+  navigationStyle: 'custom',
 })

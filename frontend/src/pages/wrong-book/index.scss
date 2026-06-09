@@ -1,3 +1,24 @@
+.wrong-book-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: var(--space-sm);
+}
+
+.wrong-book-summary {
+  flex-shrink: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.wrong-book-item {
+  height: 100%;
+  margin-bottom: 0;
+  box-sizing: border-box;
+}
+
 .wrong-book-ring {
   font-size: 0.65rem;
 }

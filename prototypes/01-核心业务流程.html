@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI炼金 · Phase 0 核心业务流程</title>
+  <title>AI炼金 · Phase 0 核心业务流程（Soft UI）</title>
   <link rel="stylesheet" href="assets/css/prototype.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 </head>
 <body>
 
@@ -13,84 +15,154 @@
   <symbol id="icon-paste" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></symbol>
   <symbol id="icon-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
   <symbol id="icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></symbol>
-  <!-- 灵韵 · 玻璃曲颈烧瓶（发光药液 = 三次机会） -->
+  <!-- 灵韵 · 炼金炉（玻璃三角瓶 · flat split-shade · 黄橙药液 + 浅蓝玻璃） -->
   <defs>
-    <linearGradient id="flask-glass" x1="8" y1="2" x2="32" y2="42" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#EAF6FF" stop-opacity="0.85"/>
-      <stop offset="45%" stop-color="#FFFFFF" stop-opacity="0.2"/>
-      <stop offset="100%" stop-color="#B8D4E8" stop-opacity="0.4"/>
-    </linearGradient>
-    <linearGradient id="flask-liquid" x1="20" y1="41" x2="20" y2="13" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1BCB7A"/>
-      <stop offset="50%" stop-color="#2EFAA3"/>
-      <stop offset="100%" stop-color="#7DF8D8"/>
-    </linearGradient>
-    <linearGradient id="flask-liquid-dim" x1="20" y1="41" x2="20" y2="20" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1BCB7A" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#4DD0E1" stop-opacity="0.35"/>
-    </linearGradient>
-    <radialGradient id="flask-liquid-glow" cx="20" cy="30" r="14" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.75"/>
-      <stop offset="45%" stop-color="#2EFAA3" stop-opacity="0.45"/>
-      <stop offset="100%" stop-color="#2EFAA3" stop-opacity="0"/>
-    </radialGradient>
-    <filter id="flask-glow-filter" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="1.6" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-    <clipPath id="flask-body-clip">
-      <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z"/>
+    <clipPath id="potion-half-l"><rect x="0" y="-12" width="24" height="68"/></clipPath>
+    <clipPath id="potion-half-r"><rect x="24" y="-12" width="24" height="68"/></clipPath>
+    <clipPath id="potion-inner-clip">
+      <path d="M 17.5 9 H 30.5 V 16 L 38 46 H 10 L 17.5 16 Z"/>
     </clipPath>
+    <path id="potion-wall" fill-rule="evenodd" d="
+      M 13 2 H 35 V 7 H 34 V 8 H 33 V 16
+      L 41 49 H 7 L 15 16 V 8 H 13 Z
+      M 17.5 9 H 30.5 V 16 L 38 46 H 10 L 17.5 16 Z"/>
+    <path id="potion-outline" fill="none" stroke-linejoin="round" stroke-width="0.85" d="
+      M 13 2 H 35 V 7 H 34 V 8 H 33 V 16
+      L 41 49 H 7 L 15 16 V 8 H 13 Z"/>
+    <path id="potion-liquid-3" d="
+      M 13.75 31
+      Q 16.5 28.5 24 30
+      Q 31.5 31.5 34.25 31
+      L 37.2 46 H 10.8 Z"/>
+    <path id="potion-liquid-2" d="
+      M 12.75 35
+      Q 15.5 33 24 34.2
+      Q 32.5 35.2 35.25 35
+      L 37.6 46 H 10.4 Z"/>
+    <path id="potion-liquid-1" d="
+      M 11.75 39
+      Q 14.5 37.5 24 38.5
+      Q 33.5 39.5 36.25 39
+      L 38 46 H 10 Z"/>
+    <path id="potion-wave-3" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="
+      M 13.75 31 Q 16.5 28.5 24 30 Q 31.5 31.5 34.25 31"/>
+    <path id="potion-wave-2" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="
+      M 12.75 35 Q 15.5 33 24 34.2 Q 32.5 35.2 35.25 35"/>
+    <path id="potion-wave-1" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="
+      M 11.75 39 Q 14.5 37.5 24 38.5 Q 33.5 39.5 36.25 39"/>
   </defs>
-  <symbol id="icon-flask-3" viewBox="0 0 40 48">
-    <ellipse cx="20" cy="33" rx="11" ry="9" fill="#2EFAA3" opacity="0.18"/>
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
-    <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
-      <path d="M12.5 38.5 L15 14.5 L25 14.5 L27.5 38.5 Q27.5 41.5 20 41.5 Q12.5 41.5 12.5 38.5 Z" fill="url(#flask-liquid)"/>
-      <ellipse cx="20" cy="30" rx="5" ry="7" fill="url(#flask-liquid-glow)"/>
-      <circle cx="17" cy="28" r="1" fill="#FFFFFF" opacity="0.55"/>
-      <circle cx="22" cy="33" r="0.7" fill="#FFFFFF" opacity="0.4"/>
+  <symbol id="icon-flask-3" viewBox="0 -12 48 68">
+    <g clip-path="url(#potion-inner-clip)">
+      <g clip-path="url(#potion-half-l)"><use href="#potion-liquid-3" fill="#FFD600"/></g>
+      <g clip-path="url(#potion-half-r)"><use href="#potion-liquid-3" fill="#F5B800"/></g>
+      <g clip-path="url(#potion-half-l)"><use href="#potion-wave-3" stroke="#FF9100"/></g>
+      <g clip-path="url(#potion-half-r)"><use href="#potion-wave-3" stroke="#F57C00"/></g>
+      <g clip-path="url(#potion-half-l)" fill="#FF9100">
+        <ellipse cx="18" cy="37.5" rx="1.5" ry="2.6"/>
+        <ellipse cx="24" cy="38.5" rx="1.5" ry="2.6"/>
+        <ellipse cx="30" cy="37.5" rx="1.5" ry="2.6"/>
+      </g>
+      <g clip-path="url(#potion-half-r)" fill="#F57C00">
+        <ellipse cx="18" cy="37.5" rx="1.5" ry="2.6"/>
+        <ellipse cx="24" cy="38.5" rx="1.5" ry="2.6"/>
+        <ellipse cx="30" cy="37.5" rx="1.5" ry="2.6"/>
+      </g>
     </g>
-    <path d="M14 5 L14.5 38 Q15 41 20 41 Q25 41 25.5 38 L26 14" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.55"/>
-    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
-    <circle cx="28" cy="6" r="0.9" fill="#2EFAA3" opacity="0.7"/>
-    <circle cx="31" cy="9" r="0.6" fill="#4DD0E1" opacity="0.6"/>
-  </symbol>
-  <symbol id="icon-flask-2" viewBox="0 0 40 48">
-    <ellipse cx="20" cy="35" rx="9" ry="7" fill="#2EFAA3" opacity="0.12"/>
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
-    <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
-      <path d="M13.5 38.5 L16 22 L24 22 L26.5 38.5 Q26.5 41.5 20 41.5 Q13.5 41.5 13.5 38.5 Z" fill="url(#flask-liquid)"/>
-      <ellipse cx="20" cy="32" rx="4" ry="5" fill="url(#flask-liquid-glow)" opacity="0.8"/>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-wall" fill="#E0F7FF"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-wall" fill="#B3E5FC"/></g>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-outline" stroke="#9AD4EF"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-outline" stroke="#7EC8E8"/></g>
+    <g transform="translate(0,-12)">
+      <g clip-path="url(#potion-half-l)" fill="#FFD600">
+        <circle cx="8" cy="8" r="4"/>
+        <circle cx="40" cy="8" r="4"/>
+        <rect x="22.6" y="0.2" width="2.8" height="6.5" rx="1.4"/>
+        <rect x="20.5" y="2.3" width="7" height="2.8" rx="1.4"/>
+        <rect x="15.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(-28 16.6 7.1)"/>
+        <rect x="29.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(28 30.6 7.1)"/>
+      </g>
+      <g clip-path="url(#potion-half-r)" fill="#F5B800">
+        <circle cx="8" cy="8" r="4"/>
+        <circle cx="40" cy="8" r="4"/>
+        <rect x="22.6" y="0.2" width="2.8" height="6.5" rx="1.4"/>
+        <rect x="20.5" y="2.3" width="7" height="2.8" rx="1.4"/>
+        <rect x="15.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(-28 16.6 7.1)"/>
+        <rect x="29.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(28 30.6 7.1)"/>
+      </g>
     </g>
-    <path d="M14 5 L14.5 38 Q15 41 20 41 Q25 41 25.5 38 L26 14" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.45"/>
-    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
-    <circle cx="29" cy="7" r="0.7" fill="#4DD0E1" opacity="0.45"/>
   </symbol>
-  <symbol id="icon-flask-1" viewBox="0 0 40 48">
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
-    <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
-      <path d="M14.5 38.5 L17 29 L23 29 L25.5 38.5 Q25.5 41.5 20 41.5 Q14.5 41.5 14.5 38.5 Z" fill="url(#flask-liquid-dim)"/>
-      <ellipse cx="20" cy="35" rx="3" ry="3.5" fill="url(#flask-liquid-glow)" opacity="0.5"/>
+  <symbol id="icon-flask-2" viewBox="0 -12 48 68">
+    <g clip-path="url(#potion-inner-clip)">
+      <g clip-path="url(#potion-half-l)"><use href="#potion-liquid-2" fill="#FFD600"/></g>
+      <g clip-path="url(#potion-half-r)"><use href="#potion-liquid-2" fill="#F5B800"/></g>
+      <g clip-path="url(#potion-half-l)"><use href="#potion-wave-2" stroke="#FF9100"/></g>
+      <g clip-path="url(#potion-half-r)"><use href="#potion-wave-2" stroke="#F57C00"/></g>
+      <g clip-path="url(#potion-half-l)" fill="#FF9100">
+        <ellipse cx="19" cy="39" rx="1.4" ry="2.2"/>
+        <ellipse cx="29" cy="39" rx="1.4" ry="2.2"/>
+      </g>
+      <g clip-path="url(#potion-half-r)" fill="#F57C00">
+        <ellipse cx="19" cy="39" rx="1.4" ry="2.2"/>
+        <ellipse cx="29" cy="39" rx="1.4" ry="2.2"/>
+      </g>
     </g>
-    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-wall" fill="#E0F7FF"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-wall" fill="#B3E5FC"/></g>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-outline" stroke="#9AD4EF"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-outline" stroke="#7EC8E8"/></g>
+    <g transform="translate(0,-12)">
+      <g clip-path="url(#potion-half-l)" fill="#FFD600">
+        <circle cx="9" cy="9" r="3.2"/>
+        <circle cx="39" cy="9" r="3.2"/>
+        <rect x="22.6" y="1.2" width="2.8" height="5.5" rx="1.4"/>
+        <rect x="20.5" y="3.1" width="7" height="2.8" rx="1.4"/>
+      </g>
+      <g clip-path="url(#potion-half-r)" fill="#F5B800">
+        <circle cx="9" cy="9" r="3.2"/>
+        <circle cx="39" cy="9" r="3.2"/>
+        <rect x="22.6" y="1.2" width="2.8" height="5.5" rx="1.4"/>
+        <rect x="20.5" y="3.1" width="7" height="2.8" rx="1.4"/>
+      </g>
+    </g>
   </symbol>
-  <symbol id="icon-flask-0" viewBox="0 0 40 48">
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="#F0F2F5" stroke="none" opacity="0.9"/>
-    <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#ECEFF1" stroke="#9AA5B1" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 3.2 H23 V11 H17 Z" fill="#F5F5F5" stroke="#9AA5B1" stroke-width="1.4" stroke-linejoin="round"/>
-    <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#9AA5B1" stroke-width="1.5" stroke-linejoin="round"/>
-    <path d="M14 24 L17 31 L15 37" stroke="#B0BEC5" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-    <path d="M26 22 L23 30 L25 36" stroke="#B0BEC5" stroke-width="1.1" fill="none" stroke-linecap="round"/>
-    <line x1="12" y1="34" x2="28" y2="37" stroke="#B0BEC5" stroke-width="0.9" opacity="0.55"/>
+  <symbol id="icon-flask-1" viewBox="0 -12 48 68">
+    <g clip-path="url(#potion-inner-clip)">
+      <g clip-path="url(#potion-half-l)"><use href="#potion-liquid-1" fill="#FFD600"/></g>
+      <g clip-path="url(#potion-half-r)"><use href="#potion-liquid-1" fill="#F5B800"/></g>
+      <g clip-path="url(#potion-half-l)"><use href="#potion-wave-1" stroke="#FF9100"/></g>
+      <g clip-path="url(#potion-half-r)"><use href="#potion-wave-1" stroke="#F57C00"/></g>
+      <g clip-path="url(#potion-half-l)" fill="#FF9100">
+        <ellipse cx="24" cy="40" rx="1.4" ry="2"/>
+      </g>
+      <g clip-path="url(#potion-half-r)" fill="#F57C00">
+        <ellipse cx="24" cy="40" rx="1.4" ry="2"/>
+      </g>
+    </g>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-wall" fill="#E0F7FF"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-wall" fill="#B3E5FC"/></g>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-outline" stroke="#9AD4EF"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-outline" stroke="#7EC8E8"/></g>
+    <g transform="translate(0,-12)">
+      <g clip-path="url(#potion-half-l)" fill="#FFD600">
+        <rect x="22.6" y="2.2" width="2.8" height="4.5" rx="1.4"/>
+        <rect x="20.5" y="4.1" width="7" height="2.8" rx="1.4"/>
+      </g>
+      <g clip-path="url(#potion-half-r)" fill="#F5B800">
+        <rect x="22.6" y="2.2" width="2.8" height="4.5" rx="1.4"/>
+        <rect x="20.5" y="4.1" width="7" height="2.8" rx="1.4"/>
+      </g>
+    </g>
   </symbol>
-  <!-- 灵韵 · 能量水晶（遗留 symbol，答题页已改用炼金瓶） -->
+  <symbol id="icon-flask-0" viewBox="0 -12 48 68">
+    <g clip-path="url(#potion-half-l)"><use href="#potion-wall" fill="#D6ECF5"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-wall" fill="#A8D4E8"/></g>
+    <g clip-path="url(#potion-half-l)"><use href="#potion-outline" stroke="#8EC4DC"/></g>
+    <g clip-path="url(#potion-half-r)"><use href="#potion-outline" stroke="#72B8D4"/></g>
+    <path d="M 18 28 L 20 34 L 18.5 40" stroke="#7EB8D4" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <path d="M 30 26 L 28 33 L 29.5 39" stroke="#7EB8D4" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <line x1="12" y1="44" x2="36" y2="44" stroke="#7EB8D4" stroke-width="1" opacity="0.6"/>
+  </symbol>
+  <!-- 灵韵 · 能量水晶（遗留 symbol，答题页已改用炼金炉） -->
   <symbol id="lingyun-3" viewBox="0 0 48 76">
     <defs>
       <linearGradient id="ly3-core" x1="24" y1="68" x2="24" y2="30" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#B8860B"/><stop offset="45%" stop-color="#F0C030"/><stop offset="100%" stop-color="#FFF8C8"/></linearGradient>
@@ -181,7 +253,7 @@
 <div class="proto-page">
   <header class="proto-header">
     <h1>AI炼金 · Phase 0 核心业务流程</h1>
-    <p>12 屏原型 · 首页底部 Tab + 输入三态 + 答题灵韵 + 报告分享海报</p>
+    <p>Soft UI 风格 · 12 屏原型 · 首页底部 Tab + 输入三态 + 答题灵韵 + 报告分享海报</p>
   </header>
 
   <div class="proto-grid">
@@ -438,24 +510,46 @@
           <div class="app-content" style="justify-content:center">
             <div class="loading-center" style="flex:0;padding:var(--space-lg) 0">
               <div class="loading-flask">
-                <svg class="loading-flask-svg" viewBox="0 0 40 48" aria-hidden="true">
-                  <ellipse class="loading-flask-aura" cx="20" cy="33" rx="12" ry="10" fill="#2EFAA3" opacity="0"/>
-                  <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="url(#flask-glass)" stroke="none" opacity="0.35"/>
-                  <g clip-path="url(#flask-body-clip)" filter="url(#flask-glow-filter)">
+                <svg class="loading-flask-svg" viewBox="0 -12 48 68" aria-hidden="true">
+                  <g clip-path="url(#potion-inner-clip)">
                     <g class="loading-liquid">
-                      <path d="M12.5 38.5 L15 14.5 L25 14.5 L27.5 38.5 Q27.5 41.5 20 41.5 Q12.5 41.5 12.5 38.5 Z" fill="url(#flask-liquid)"/>
-                      <ellipse class="loading-liquid-core" cx="20" cy="30" rx="5" ry="7" fill="url(#flask-liquid-glow)"/>
-                      <circle class="loading-bubble loading-bubble--1" cx="17" cy="28" r="1" fill="#FFFFFF" opacity="0"/>
-                      <circle class="loading-bubble loading-bubble--2" cx="22" cy="33" r="0.7" fill="#FFFFFF" opacity="0"/>
+                      <g clip-path="url(#potion-half-l)"><use href="#potion-liquid-3" fill="#FFD600"/></g>
+                      <g clip-path="url(#potion-half-r)"><use href="#potion-liquid-3" fill="#F5B800"/></g>
+                      <g clip-path="url(#potion-half-l)"><use href="#potion-wave-3" stroke="#FF9100"/></g>
+                      <g clip-path="url(#potion-half-r)"><use href="#potion-wave-3" stroke="#F57C00"/></g>
+                      <g clip-path="url(#potion-half-l)" fill="#FF9100">
+                        <ellipse cx="18" cy="37.5" rx="1.5" ry="2.6"/>
+                        <ellipse cx="24" cy="38.5" rx="1.5" ry="2.6"/>
+                        <ellipse cx="30" cy="37.5" rx="1.5" ry="2.6"/>
+                      </g>
+                      <g clip-path="url(#potion-half-r)" fill="#F57C00">
+                        <ellipse cx="18" cy="37.5" rx="1.5" ry="2.6"/>
+                        <ellipse cx="24" cy="38.5" rx="1.5" ry="2.6"/>
+                        <ellipse cx="30" cy="37.5" rx="1.5" ry="2.6"/>
+                      </g>
                     </g>
                   </g>
-                  <path d="M14 5 L14.5 38 Q15 41 20 41 Q25 41 25.5 38 L26 14" fill="none" stroke="#FFFFFF" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
-                  <path d="M16.5 1.5 H23.5 V3.2 H16.5 Z" fill="#E8F4FC" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-                  <path d="M17 3.2 H23 V11 H17 Z" fill="#FFFFFF" fill-opacity="0.35" stroke="#3D5A6C" stroke-width="1.4" stroke-linejoin="round"/>
-                  <path d="M17 11 L10.5 38.5 Q10 41.5 20 41.5 Q30 41.5 29.5 38.5 L23 11 Z" fill="none" stroke="#3D5A6C" stroke-width="1.5" stroke-linejoin="round"/>
-                  <g class="loading-flask-sparkles">
-                    <circle cx="28" cy="6" r="0.9" fill="#2EFAA3"/>
-                    <circle cx="31" cy="9" r="0.6" fill="#4DD0E1"/>
+                  <g clip-path="url(#potion-half-l)"><use href="#potion-wall" fill="#E0F7FF"/></g>
+                  <g clip-path="url(#potion-half-r)"><use href="#potion-wall" fill="#B3E5FC"/></g>
+                  <g clip-path="url(#potion-half-l)"><use href="#potion-outline" stroke="#9AD4EF"/></g>
+                  <g clip-path="url(#potion-half-r)"><use href="#potion-outline" stroke="#7EC8E8"/></g>
+                  <g class="loading-flask-sparkles" transform="translate(0,-12)">
+                    <g clip-path="url(#potion-half-l)" fill="#FFD600">
+                      <circle cx="8" cy="8" r="4"/>
+                      <circle cx="40" cy="8" r="4"/>
+                      <rect x="22.6" y="0.2" width="2.8" height="6.5" rx="1.4"/>
+                      <rect x="20.5" y="2.3" width="7" height="2.8" rx="1.4"/>
+                      <rect x="15.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(-28 16.6 7.1)"/>
+                      <rect x="29.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(28 30.6 7.1)"/>
+                    </g>
+                    <g clip-path="url(#potion-half-r)" fill="#F5B800">
+                      <circle cx="8" cy="8" r="4"/>
+                      <circle cx="40" cy="8" r="4"/>
+                      <rect x="22.6" y="0.2" width="2.8" height="6.5" rx="1.4"/>
+                      <rect x="20.5" y="2.3" width="7" height="2.8" rx="1.4"/>
+                      <rect x="15.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(-28 16.6 7.1)"/>
+                      <rect x="29.6" y="4.8" width="2" height="4.5" rx="1" transform="rotate(28 30.6 7.1)"/>
+                    </g>
                   </g>
                 </svg>
               </div>
@@ -476,7 +570,7 @@
             <div class="loading-tips">
               <div class="loading-tips-title">炼金小知识</div>
               <div class="loading-tips-item active">每关 3–5 题，约 3–5 分钟完成</div>
-              <div class="loading-tips-item">答错散逸 1 缕灵韵，炼金瓶药液代表三次机会</div>
+              <div class="loading-tips-item">答错散逸 1 缕灵韵，炼金炉药液代表三次机会</div>
               <div class="loading-tips-item">通关后 AI 生成个性化复盘报告</div>
             </div>
           </div>
@@ -555,7 +649,7 @@
             </div>
             <div class="quiz-lingyun-row">
               <div class="lingyun-badge" aria-label="灵韵 3/3">
-                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-3"/></svg>
+                <svg class="lingyun-badge-icon" viewBox="0 -12 48 68"><use href="#icon-flask-3"/></svg>
                 <div class="lingyun-badge-text">
                   <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">3/3</span></div>
                   <div class="lingyun-badge-hint">答错散逸 1 缕灵韵</div>
@@ -614,7 +708,7 @@
             </div>
             <div class="quiz-lingyun-row">
               <div class="lingyun-badge" aria-label="灵韵 3/3">
-                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-3"/></svg>
+                <svg class="lingyun-badge-icon" viewBox="0 -12 48 68"><use href="#icon-flask-3"/></svg>
                 <div class="lingyun-badge-text">
                   <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">3/3</span></div>
                   <div class="lingyun-badge-hint">答对后仍保留余辉</div>
@@ -673,7 +767,7 @@
             </div>
             <div class="quiz-lingyun-row">
               <div class="lingyun-badge lingyun-badge--warn" aria-label="灵韵 2/3">
-                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-2"/></svg>
+                <svg class="lingyun-badge-icon" viewBox="0 -12 48 68"><use href="#icon-flask-2"/></svg>
                 <div class="lingyun-badge-text">
                   <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">2/3</span></div>
                   <div class="lingyun-badge-hint">答对后仍保留余辉</div>
@@ -820,7 +914,7 @@
             </div>
             <div class="lingyun-hero">
               <div class="lingyun-badge lingyun-badge--lg lingyun-badge--depleted" aria-label="灵韵 0/3">
-                <svg class="lingyun-badge-icon" viewBox="0 0 40 48"><use href="#icon-flask-0"/></svg>
+                <svg class="lingyun-badge-icon" viewBox="0 -12 48 68"><use href="#icon-flask-0"/></svg>
                 <div class="lingyun-badge-text">
                   <div class="lingyun-badge-title">灵韵 <span class="lingyun-badge-count">0/3</span></div>
                   <div class="lingyun-badge-hint">瓶空力尽，精神的升华已消散殆尽</div>
@@ -907,7 +1001,7 @@
                 <span class="weak-tag weak">mutex</span>
               </div>
               <div class="share-poster-flask" aria-hidden="true">
-                <svg viewBox="0 0 40 48"><use href="#icon-flask-3"/></svg>
+                <svg viewBox="0 -12 48 68"><use href="#icon-flask-3"/></svg>
               </div>
               <div class="share-poster-footer">
                 <div class="share-poster-qr" aria-label="小程序码">

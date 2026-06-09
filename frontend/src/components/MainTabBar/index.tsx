@@ -2,25 +2,24 @@ import { Image, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 
 import { getTabIconSrc } from '@/components/MainTabBar/tabIcons'
+import { MAIN_TAB_PATHS, type MainTabKey } from '@/utils/mainTab'
 
 import './index.scss'
 
-type TabKey = 'home' | 'bank' | 'profile'
-
-const TABS: Array<{ key: TabKey; label: string; path: string }> = [
-  { key: 'home', label: '首页', path: '/pages/index/index' },
-  { key: 'bank', label: '题库', path: '/pages/question-bank/index' },
-  { key: 'profile', label: '我的', path: '/pages/profile/index' },
+const TABS: Array<{ key: MainTabKey; label: string; path: string }> = [
+  { key: 'home', label: '首页', path: MAIN_TAB_PATHS.home },
+  { key: 'bank', label: '题库', path: MAIN_TAB_PATHS.bank },
+  { key: 'profile', label: '我的', path: MAIN_TAB_PATHS.profile },
 ]
 
 interface Props {
-  active: TabKey
+  active: MainTabKey
 }
 
 export default function MainTabBar({ active }: Props) {
-  const switchTab = (path: string, key: TabKey) => {
+  const switchTab = (path: string, key: MainTabKey) => {
     if (key === active) return
-    Taro.redirectTo({ url: path })
+    Taro.switchTab({ url: path })
   }
 
   return (

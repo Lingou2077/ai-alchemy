@@ -5,7 +5,13 @@ import { useEffect } from 'react'
 import LingyunBadge from '@/components/LingyunBadge'
 import { saveCurrentSession } from '@/services/storage'
 import { useSessionStore } from '@/stores/sessionStore'
-import { accuracyRingClass, formatDuration, formatRelativeTime } from '@/utils/formatTime'
+import { switchMainTab } from '@/utils/mainTab'
+import {
+  accuracyRingClass,
+  accuracyRingProgressStyle,
+  formatRelativeTime,
+  resolveQuizDurationSec,
+} from '@/utils/formatTime'
 
 import './index.scss'
 
@@ -22,7 +28,7 @@ export default function ReportPage() {
 
   Taro.useDidShow(() => {
     if (!session || !report) {
-      Taro.redirectTo({ url: '/pages/index/index' })
+      switchMainTab('home')
     }
   })
 
@@ -49,10 +55,12 @@ export default function ReportPage() {
   const weeklyIndex = report.stats?.weeklyQuizIndex
   const relatedHistory = report.stats?.relatedHistory ?? []
 
+  const displayDuration = resolveQuizDurationSec(session.answers, report.duration)
+
   const restart = async () => {
     resetFlow()
     await saveCurrentSession(null)
-    Taro.redirectTo({ url: '/pages/index/index' })
+    switchMainTab('home')
   }
 
   const openHistoryDetail = (sessionId: string) => {
@@ -68,7 +76,7 @@ export default function ReportPage() {
         <View className='report-summary'>
           <View className='report-summary-main'>
             <View className={`report-badge ${failed ? 'fail' : 'success'}`}>
-              {failed ? '灵韵散尽…' : '炼成成功！'}
+              {failed ? '灵韵散尽…' : '炼金成功！'}
             </View>
             <View className={`report-score ${failed ? 'report-score--fail' : ''}`}>
               {Math.round(report.accuracy)}<Text className='report-score-unit'>%</Text>
@@ -76,14 +84,16 @@ export default function ReportPage() {
           </View>
           <View className='report-summary-side'>
             <View className='report-stats'>
-              <Text>用时 <Text className='strong'>{formatDuration(report.duration)}</Text></Text>
+              <Text>用时 <Text className='strong'>{displayDuration}</Text> 秒</Text>
               <Text>对 <Text className='strong'>{report.correctCount}</Text> · 错 <Text className='strong'>{report.wrongCount}</Text></Text>
             </View>
             {(compareValue !== null && compareValue !== undefined) || weeklyIndex ? (
               <View className='report-compare'>
                 {compareValue !== null && compareValue !== undefined && (
                   <Text className={`compare-pill ${compareValue >= 0 ? 'up' : 'down'}`}>
-                    比上次 {compareValue >= 0 ? '+' : ''}{compareValue}%
+                    比上次
+                    <Text className='compare-pill-sign'>{compareValue >= 0 ? '+' : '-'}</Text>
+                    {Math.abs(compareValue)}%
                   </Text>
                 )}
                 {weeklyIndex ? (
@@ -94,23 +104,26 @@ export default function ReportPage() {
           </View>
         </View>
 
-        {report.expGain && report.expGain.amount > 0 && (
-          <View className='report-exp-banner report-card'>
-            <Text className='report-exp-amount'>+{report.expGain.amount} EXP</Text>
-            {report.expGain.leveledUp && (
-              <Text className='report-exp-level'>晋升 Lv.{report.expGain.newLevel}</Text>
+        {(report.expGain?.amount > 0 || failed) && (
+          <View className='report-exp-row'>
+            {report.expGain && report.expGain.amount > 0 && (
+              <View className='report-exp-banner report-card'>
+                <Text className='report-exp-amount'>+{report.expGain.amount} EXP</Text>
+                {report.expGain.leveledUp && (
+                  <Text className='report-exp-level'>晋升 Lv.{report.expGain.newLevel}</Text>
+                )}
+              </View>
+            )}
+            {failed && (
+              <View className='report-lingyun-card report-card'>
+                <LingyunBadge hearts={0} large depleted showHint={false} />
+              </View>
             )}
           </View>
         )}
 
         {report.syncFailed && (
           <View className='report-sync-warn'>云端同步失败，报告已正常展示</View>
-        )}
-
-        {failed && (
-          <View className='lingyun-hero'>
-            <LingyunBadge hearts={0} large depleted />
-          </View>
         )}
 
         <View className='report-section'>
@@ -144,7 +157,10 @@ export default function ReportPage() {
                   className='history-item'
                   onClick={() => openHistoryDetail(item.sessionId)}
                 >
-                  <View className={`history-score-ring ${accuracyRingClass(item.accuracy)}`}>
+                  <View
+                    className={`history-score-ring history-score-ring--progress ${accuracyRingClass(item.accuracy)}`}
+                    style={accuracyRingProgressStyle(item.accuracy)}
+                  >
                     {Math.round(item.accuracy)}
                   </View>
                   <View className='history-info'>
@@ -169,7 +185,7 @@ export default function ReportPage() {
                 const question = session.levels.flatMap((level) => level.questions).find((q) => q.id === item.questionId)
                 return (
                   <View key={item.questionId} className='history-item history-item--static'>
-                    <View className='history-score-ring low'>错</View>
+                    <View className='history-score-ring low history-score-ring--icon'>错</View>
                     <View className='history-info'>
                       <View className='history-title'>{question?.stem || item.questionId}</View>
                       <View className='history-meta'>已收录至错题本</View>

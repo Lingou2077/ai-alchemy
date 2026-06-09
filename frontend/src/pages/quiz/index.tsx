@@ -1,6 +1,6 @@
 import { Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import LingyunBadge from '@/components/LingyunBadge'
 import { INITIAL_HEARTS } from '@/constants'
@@ -9,6 +9,7 @@ import { appendHistoryItem, buildHistoryItem, saveCurrentSession } from '@/servi
 import { useSessionStore } from '@/stores/sessionStore'
 import { useUserStore } from '@/stores/userStore'
 import type { AnswerRecord, Question } from '@/types/session'
+import { computeAnswerDurationSec } from '@/utils/formatTime'
 
 import './index.scss'
 
@@ -18,6 +19,12 @@ const difficultyLabel: Record<Question['difficulty'], string> = {
   easy: '简单',
   medium: '中等',
   hard: '困难',
+}
+
+const typeLabel: Record<Question['type'], string> = {
+  single: '单选',
+  multiple: '多选',
+  boolean: '判断',
 }
 
 export default function QuizPage() {
@@ -38,10 +45,24 @@ export default function QuizPage() {
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null)
   const [explanation, setExplanation] = useState('')
   const [correctAnswerKeys, setCorrectAnswerKeys] = useState<string[]>([])
-  const [startedAt] = useState(session?.startedAt ?? Date.now())
   const [questionStartedAt, setQuestionStartedAt] = useState(Date.now())
+  const [reportGenerating, setReportGenerating] = useState(false)
+  const quizStartedRef = useRef(false)
 
   const currentQuestion = questions[currentIndex]
+
+  const persistSession = async (next: NonNullable<typeof session>) => {
+    setSession(next)
+    await saveCurrentSession(next)
+  }
+
+  useEffect(() => {
+    if (!session || quizStartedRef.current) return
+    quizStartedRef.current = true
+    const quizStartedAt = Date.now()
+    setQuestionStartedAt(quizStartedAt)
+    persistSession({ ...session, startedAt: quizStartedAt, status: 'playing' })
+  }, [session])
 
   Taro.useDidShow(() => {
     if (!session) {
@@ -49,13 +70,9 @@ export default function QuizPage() {
     }
   })
 
-  const persistSession = async (next: NonNullable<typeof session>) => {
-    setSession(next)
-    await saveCurrentSession(next)
-  }
-
   const finishQuiz = async (status: 'completed' | 'failed', nextHearts: number, nextAnswers: AnswerRecord[]) => {
-    if (!session) return
+    if (!session || reportGenerating) return
+    setReportGenerating(true)
     const finishedSession = {
       ...session,
       hearts: nextHearts,
@@ -67,7 +84,7 @@ export default function QuizPage() {
     await persistSession(finishedSession)
 
     try {
-      const durationSec = Math.max(1, Math.floor((Date.now() - startedAt) / 1000))
+      const durationSec = computeAnswerDurationSec(nextAnswers)
       const reportPayload = await generateReport(session.sessionId, nextAnswers, {
         quizStatus: status,
         durationSec,
@@ -88,7 +105,7 @@ export default function QuizPage() {
         totalQuestions: nextAnswers.length,
         correctCount,
         wrongCount: nextAnswers.length - correctCount,
-        duration: Math.max(1, Math.floor((Date.now() - startedAt) / 1000)),
+        duration: computeAnswerDurationSec(nextAnswers),
         weakPoints: [],
         summary: '报告生成失败，请查看本地正确率。',
         suggestion: '可稍后重试生成报告。',
@@ -125,6 +142,8 @@ export default function QuizPage() {
 
     setSelectedKeys(nextSelected)
     setFeedback('checking')
+    const timeSpent = Date.now() - questionStartedAt
+    const answeredAt = Date.now()
 
     try {
       const result = await checkAnswer(session.sessionId, currentQuestion.id, nextSelected)
@@ -134,8 +153,8 @@ export default function QuizPage() {
           questionId: currentQuestion.id,
           userAnswer: nextSelected,
           isCorrect: correct,
-          timeSpent: Date.now() - questionStartedAt,
-          answeredAt: Date.now(),
+          timeSpent,
+          answeredAt,
         }
         const nextAnswers = [...answers, record]
         const nextHearts = correct ? hearts : hearts - 1
@@ -167,6 +186,8 @@ export default function QuizPage() {
   const submitMultiple = async () => {
     if (!session || !currentQuestion || selectedKeys.length === 0 || feedback !== 'idle') return
     setFeedback('checking')
+    const timeSpent = Date.now() - questionStartedAt
+    const answeredAt = Date.now()
     try {
       const result = await checkAnswer(session.sessionId, currentQuestion.id, selectedKeys)
       setTimeout(async () => {
@@ -175,8 +196,8 @@ export default function QuizPage() {
           questionId: currentQuestion.id,
           userAnswer: selectedKeys,
           isCorrect: correct,
-          timeSpent: Date.now() - questionStartedAt,
-          answeredAt: Date.now(),
+          timeSpent,
+          answeredAt,
         }
         const nextAnswers = [...answers, record]
         const nextHearts = correct ? hearts : hearts - 1
@@ -204,6 +225,7 @@ export default function QuizPage() {
   }
 
   const goNext = async () => {
+    if (reportGenerating) return
     if (hearts <= 0) {
       await finishQuiz('failed', hearts, answers)
       return
@@ -227,6 +249,8 @@ export default function QuizPage() {
   }
 
   const progress = ((currentIndex + 1) / questions.length) * 100
+  const isLastQuestion = currentIndex >= questions.length - 1
+  const canGoNext = feedback === 'revealed' && !reportGenerating
 
   return (
     <View className='app-page quiz-page'>
@@ -244,7 +268,7 @@ export default function QuizPage() {
           <View className='quiz-top-spacer' />
         </View>
         <View className='quiz-lingyun-row'>
-          <LingyunBadge hearts={hearts} depleted={hearts === 0} />
+          <LingyunBadge hearts={hearts} depleted={hearts === 0} showHint={false} compact />
         </View>
         <View className='quiz-progress'>
           <View className='quiz-progress-bar'>
@@ -256,9 +280,12 @@ export default function QuizPage() {
 
       <View className='app-content app-content--quiz'>
         <View className='question-panel'>
-          <Text className={`difficulty-tag ${currentQuestion.difficulty}`}>
-            {difficultyLabel[currentQuestion.difficulty]}
-          </Text>
+          <View className='question-tags-row'>
+            <Text className={`difficulty-tag ${currentQuestion.difficulty}`}>
+              {difficultyLabel[currentQuestion.difficulty]}
+            </Text>
+            <Text className='question-type-tag'>{typeLabel[currentQuestion.type]}</Text>
+          </View>
           <View className='question-stem'>{currentQuestion.stem}</View>
         </View>
 
@@ -307,10 +334,23 @@ export default function QuizPage() {
               上一题
             </View>
             <View
-              className={`btn-comic btn-sm quiz-nav-btn ${feedback === 'revealed' ? 'btn-primary' : 'btn-disabled'}`}
-              onClick={goNext}
+              className={`btn-comic btn-sm quiz-nav-btn ${
+                reportGenerating
+                  ? 'btn-primary btn-loading'
+                  : canGoNext
+                    ? 'btn-primary'
+                    : 'btn-disabled'
+              }`}
+              onClick={reportGenerating || !canGoNext ? undefined : goNext}
             >
-              {currentIndex >= questions.length - 1 ? '查看报告' : '下一题'}
+              {reportGenerating && isLastQuestion ? (
+                <>
+                  <View className='btn-spinner' />
+                  生成报告中…
+                </>
+              ) : (
+                isLastQuestion ? '查看报告' : '下一题'
+              )}
             </View>
           </View>
         </View>

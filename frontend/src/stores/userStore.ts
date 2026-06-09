@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro'
 import { create } from 'zustand'
 
-import { fetchCurrentUser, loginWithCode, updateProfile } from '@/services/userApi'
+import { fetchCurrentUser, loginWithCode, persistAvatar, updateProfile } from '@/services/userApi'
 import { clearAuthToken, loadAuthToken, saveAuthToken } from '@/services/authStorage'
 import type { UserProfile } from '@/types/user'
 
@@ -16,6 +16,7 @@ interface UserState {
   login: () => Promise<boolean>
   refreshProfile: () => Promise<void>
   updateUserProfile: (payload: { nickname?: string; avatarUrl?: string }) => Promise<void>
+  uploadUserAvatar: (filePath: string) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -67,6 +68,11 @@ export const useUserStore = create<UserState>((set, get) => ({
 
   updateUserProfile: async (payload) => {
     const user = await updateProfile(payload)
+    set({ user })
+  },
+
+  uploadUserAvatar: async (filePath) => {
+    const user = await persistAvatar(filePath)
     set({ user })
   },
 

@@ -74,6 +74,26 @@ def list_quiz_history(db: Session, user_id: int, page: int = 1, limit: int = 20)
     return items, total
 
 
+def delete_quiz_record(db: Session, user_id: int, session_id: str) -> bool:
+    record = get_quiz_record_for_user(db, user_id, session_id)
+    if record is None:
+        return False
+
+    db.delete(record)
+    db.flush()
+
+    user = db.query(User).filter(User.id == user_id).one()
+    remaining = (
+        db.query(func.count(QuizRecord.id))
+        .filter(QuizRecord.user_id == user_id)
+        .scalar()
+    ) or 0
+    user.total_quizzes = int(remaining)
+    db.add(user)
+    db.commit()
+    return True
+
+
 def serialize_quiz_history_item(record: QuizRecord) -> dict:
     return {
         "sessionId": record.session_id,

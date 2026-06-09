@@ -1,0 +1,22 @@
+.virtual-list__scroll {
+  flex: 1;
+  min-height: 0;
+  height: 0;
+  width: 100%;
+}
+
+.virtual-list__inner {
+  width: 100%;
+}
+
+.virtual-list__row {
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.list-footer-tip {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: var(--space-md) 0 var(--space-lg);
+}

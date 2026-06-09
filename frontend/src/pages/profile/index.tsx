@@ -1,9 +1,12 @@
-import { Button, Image, Text, View } from '@tarojs/components'
+import { Button, Image, Input, Text, View } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 
 import MainTabBar from '@/components/MainTabBar'
+import { resolveAvatarSrc } from '@/services/userApi'
 import { useUserStore } from '@/stores/userStore'
+import { switchMainTab } from '@/utils/mainTab'
+import { accuracyStatClass } from '@/utils/formatTime'
 
 import './index.scss'
 
@@ -13,7 +16,16 @@ export default function ProfilePage() {
   const loginError = useUserStore((state) => state.loginError)
   const login = useUserStore((state) => state.login)
   const updateUserProfile = useUserStore((state) => state.updateUserProfile)
+  const uploadUserAvatar = useUserStore((state) => state.uploadUserAvatar)
   const [syncing, setSyncing] = useState(false)
+  const [nicknameDraft, setNicknameDraft] = useState('')
+  const [nicknameFocus, setNicknameFocus] = useState(false)
+
+  useEffect(() => {
+    if (user?.nickname) {
+      setNicknameDraft(user.nickname)
+    }
+  }, [user?.nickname])
 
   Taro.useDidShow(() => {
     const { token, refreshProfile } = useUserStore.getState()
@@ -35,7 +47,7 @@ export default function ProfilePage() {
       if (!avatarUrl) return
       try {
         setSyncing(true)
-        await updateUserProfile({ avatarUrl })
+        await uploadUserAvatar(avatarUrl)
         Taro.showToast({ title: '头像已更新', icon: 'success' })
       } catch (error) {
         Taro.showToast({
@@ -46,27 +58,44 @@ export default function ProfilePage() {
         setSyncing(false)
       }
     },
-    [updateUserProfile],
+    [uploadUserAvatar],
   )
 
-  const handleSyncWechatProfile = async () => {
-    try {
-      setSyncing(true)
-      const profile = await Taro.getUserProfile({ desc: '用于完善个人资料' })
-      await updateUserProfile({
-        nickname: profile.userInfo.nickName,
-        avatarUrl: profile.userInfo.avatarUrl,
-      })
-      Taro.showToast({ title: '资料已同步', icon: 'success' })
-    } catch {
-      Taro.showToast({ title: '未授权微信资料', icon: 'none' })
-    } finally {
-      setSyncing(false)
-    }
+  const saveNickname = useCallback(
+    async (nickname: string) => {
+      const trimmed = nickname.trim()
+      if (!trimmed || trimmed === user?.nickname) return
+      try {
+        setSyncing(true)
+        await updateUserProfile({ nickname: trimmed })
+        Taro.showToast({ title: '昵称已更新', icon: 'success' })
+      } catch (error) {
+        Taro.showToast({
+          title: error instanceof Error ? error.message : '更新失败',
+          icon: 'none',
+        })
+      } finally {
+        setSyncing(false)
+      }
+    },
+    [updateUserProfile, user?.nickname],
+  )
+
+  const handleSyncWechatProfile = () => {
+    if (syncing) return
+    setNicknameFocus(true)
+    Taro.showToast({ title: '请选择微信昵称', icon: 'none' })
   }
 
+  const handleNicknameBlur = (event: { detail: { value: string } }) => {
+    setNicknameFocus(false)
+    void saveNickname(event.detail.value)
+  }
+
+  const avatarSrc = resolveAvatarSrc(user?.avatarUrl ?? '')
+
   const openHistory = () => {
-    Taro.navigateTo({ url: '/pages/history/index' })
+    switchMainTab('bank')
   }
 
   const openWrongBook = () => {
@@ -108,7 +137,6 @@ export default function ProfilePage() {
       <View className='app-content app-content--with-tab profile-page'>
         <View className='profile-header'>
           <View className='home-brand'>我的炼金室</View>
-          <View className='home-tagline'>{user.title}</View>
         </View>
 
         <View className='profile-user-card report-card'>
@@ -119,8 +147,8 @@ export default function ProfilePage() {
               onChooseAvatar={handleChooseAvatar}
               disabled={syncing}
             >
-              {user.avatarUrl ? (
-                <Image className='profile-avatar' src={user.avatarUrl} mode='aspectFill' />
+              {avatarSrc ? (
+                <Image className='profile-avatar' src={avatarSrc} mode='aspectFill' />
               ) : (
                 <View className='profile-avatar profile-avatar--placeholder'>
                   <Text>{user.nickname.slice(0, 1)}</Text>
@@ -128,16 +156,27 @@ export default function ProfilePage() {
               )}
             </Button>
             <View className='profile-user-info'>
-              <View className='profile-nickname'>{user.nickname}</View>
+              <Input
+                className='profile-nickname-input'
+                type='nickname'
+                value={nicknameDraft}
+                focus={nicknameFocus}
+                placeholder='点击同步微信昵称'
+                disabled={syncing}
+                onInput={(event) => setNicknameDraft(event.detail.value)}
+                onBlur={handleNicknameBlur}
+                onConfirm={(event) => {
+                  setNicknameFocus(false)
+                  void saveNickname(event.detail.value)
+                }}
+              />
               <View className='profile-meta'>Lv.{user.level} · {user.title}</View>
             </View>
-          </View>
-          <View className='profile-sync-row'>
             <View
-              className={`btn-comic btn-secondary btn-sm ${syncing ? 'btn-disabled' : ''}`}
+              className={`btn-comic btn-secondary btn-sm profile-sync-btn ${syncing ? 'btn-disabled' : ''}`}
               onClick={syncing ? undefined : handleSyncWechatProfile}
             >
-              同步微信资料
+              同步微信
             </View>
           </View>
         </View>
@@ -161,7 +200,7 @@ export default function ProfilePage() {
             <View className='profile-stat-value'>{user.stats.totalQuizzes}</View>
             <View className='profile-stat-label'>累计炼成</View>
           </View>
-          <View className='profile-stat-card report-card'>
+          <View className={`profile-stat-card report-card profile-stat-card--${accuracyStatClass(user.stats.averageAccuracy)}`}>
             <View className='profile-stat-value'>
               {user.stats.averageAccuracy > 0 ? `${Math.round(user.stats.averageAccuracy)}%` : '—'}
             </View>
@@ -174,14 +213,14 @@ export default function ProfilePage() {
         </View>
         <View className='history-list'>
           <View className='history-item' onClick={openHistory}>
-            <View className='history-score-ring mid'>历</View>
+            <View className='data-center-icon data-center-icon--history'>历</View>
             <View className='history-info'>
-              <View className='history-title'>学习历史</View>
+              <View className='history-title'>答题历史</View>
               <View className='history-meta'>查看全部闯关记录</View>
             </View>
           </View>
           <View className='history-item' onClick={openWrongBook}>
-            <View className='history-score-ring low'>错</View>
+            <View className='data-center-icon data-center-icon--wrong'>错</View>
             <View className='history-info'>
               <View className='history-title'>错题本</View>
               <View className='history-meta'>

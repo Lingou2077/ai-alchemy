@@ -1,9 +1,70 @@
+.generate-fail-page {
+  height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.generate-fail-scroll {
+  flex: 1;
+  min-height: 0;
+  height: 0;
+}
+
+.generate-fail-body {
+  padding: var(--space-md);
+  box-sizing: border-box;
+}
+
+.generate-fail-page .fail-illust {
+  margin-bottom: var(--space-sm);
+}
+
+.generate-fail-page .fail-illust .deco-exclaim {
+  font-size: 3rem;
+}
+
+.generate-fail-page .fail-msg {
+  margin-bottom: var(--space-md);
+}
+
+.fail-suggest-list .history-item {
+  align-items: center;
+}
+
+.generate-fail-footer {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  background: var(--bg-page);
+
+  .btn-comic {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 14px var(--space-md);
+    font-size: 1rem;
+    letter-spacing: 0;
+  }
+}
+
 .tip-badge {
-  font-size: 11px;
-  background: var(--marker-yellow);
+  font-size: 0.7rem;
+  background: var(--accent-yellow-light);
+  color: var(--accent-orange);
 }
 
 .fail-card {
-  font-size: 12px;
+  font-size: 0.75rem;
   white-space: pre-line;
+  box-sizing: border-box;
+}
+
+.generate-fail-body .fail-card + .section-head {
+  margin-top: var(--space-lg);
 }

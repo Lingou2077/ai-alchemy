@@ -2,36 +2,80 @@
   font-weight: 700;
 }
 
+.report-exp-row {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  align-items: stretch;
+}
+
+.report-exp-row .report-exp-banner,
+.report-exp-row .report-lingyun-card {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+}
+
 .report-exp-banner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 4px;
   padding: var(--space-sm) var(--space-md);
-  background: linear-gradient(90deg, rgba(46, 250, 163, 0.15), rgba(77, 208, 225, 0.12));
+  background: var(--accent-purple-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.report-lingyun-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md);
+  background: linear-gradient(135deg, var(--accent-red-light) 0%, var(--bg-surface) 55%);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.report-lingyun-card .lingyun-badge {
+  background: transparent;
+  box-shadow: none;
+  padding: 4px 8px;
+}
+
+.report-lingyun-card .lingyun-badge-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: var(--accent-red);
+}
+
+.report-lingyun-card .lingyun-badge-count {
+  color: var(--accent-red-dark);
 }
 
 .report-exp-amount {
   font-family: var(--font-score);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--lab-purple);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--accent-purple);
 }
 
 .report-exp-level {
-  font-size: 0.8rem;
+  font-size: 0.8125rem;
   font-weight: 700;
-  color: var(--spirit-green);
+  color: var(--accent-green-dark);
 }
 
 .report-sync-warn {
   font-size: 0.75rem;
-  color: var(--ink-muted);
+  color: var(--text-secondary);
   text-align: center;
   margin-bottom: var(--space-sm);
 }
 
 .history-item--static {
-  cursor: default;
+  pointer-events: none;
 }
 
 .report-related-section,

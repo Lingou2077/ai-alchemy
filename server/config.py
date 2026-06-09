@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     cors_origins: str = "*"
     content_max_length: int = 5000
     content_truncate_length: int = 4000
-    ai_timeout_seconds: int = 30
+    ai_timeout_seconds: int = 60
 
     database_url: str = ""
     jwt_secret: str = "change-me"
@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     wechat_app_id: str = ""
     wechat_app_secret: str = ""
     dev_mock_login: bool = True
+    upload_dir: str = "uploads"
+    public_base_url: str = "http://127.0.0.1:8000"
 
 
 settings = Settings()

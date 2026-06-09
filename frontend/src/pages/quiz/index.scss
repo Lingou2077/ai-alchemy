@@ -2,6 +2,67 @@
   margin-top: var(--space-sm);
 }
 
+.question-tags-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--space-sm);
+}
+
+.question-tags-row .difficulty-tag {
+  margin-bottom: 0;
+}
+
+.question-type-tag {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--accent-purple-light);
+  color: var(--accent-purple);
+}
+
+.quiz-lingyun-row .lingyun-badge {
+  background: var(--bg-page);
+  border: 1px solid rgba(124, 92, 252, 0.35);
+  box-shadow: none;
+}
+
+.quiz-lingyun-row .lingyun-badge-title {
+  color: var(--accent-purple);
+}
+
+.quiz-lingyun-row .lingyun-badge-count {
+  color: var(--text-secondary);
+}
+
 .strong {
   font-weight: 700;
+}
+
+.quiz-nav-btn.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+  opacity: 0.92;
+}
+
+.btn-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: btn-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

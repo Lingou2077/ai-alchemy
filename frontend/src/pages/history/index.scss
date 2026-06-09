@@ -9,10 +9,12 @@
 
 .sub-page-empty-title {
   font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
   margin-bottom: var(--space-sm);
 }
 
 .sub-page-empty-desc {
-  color: var(--ink-muted);
-  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
 }

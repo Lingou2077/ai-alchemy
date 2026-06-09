@@ -65,6 +65,36 @@ async def test_patch_me_rejects_empty_nickname(client: AsyncClient):
 
 
 @pytest.mark.asyncio
+async def test_upload_avatar(client: AsyncClient):
+    token = await login(client, "mock-upload-avatar")
+    png_bytes = (
+        b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+        b"\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01"
+        b"\x00\x00\x05\x00\x01\r\n-\xdb\x00\x00\x00\x00IEND\xaeB`\x82"
+    )
+    response = await client.post(
+        "/api/v1/users/me/avatar",
+        headers={"Authorization": f"Bearer {token}"},
+        files={"file": ("avatar.png", png_bytes, "image/png")},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["avatarUrl"].endswith(".png")
+    assert "/uploads/avatars/" in body["avatarUrl"]
+
+
+@pytest.mark.asyncio
+async def test_patch_me_rejects_local_avatar_path(client: AsyncClient):
+    token = await login(client, "mock-local-avatar")
+    response = await client.patch(
+        "/api/v1/users/me",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"avatar_url": "wxfile://tmp_avatar.png"},
+    )
+    assert response.status_code == 400
+
+
+@pytest.mark.asyncio
 async def test_users_are_isolated(client: AsyncClient):
     token_a = await login(client, "mock-isolated-a")
     token_b = await login(client, "mock-isolated-b")

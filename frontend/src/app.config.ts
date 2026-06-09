@@ -15,9 +15,21 @@ export default defineAppConfig({
   ],
   window: {
     backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#fff8e7',
+    navigationBarBackgroundColor: '#F8F9FE',
     navigationBarTitleText: 'AI炼金',
     navigationBarTextStyle: 'black',
-    backgroundColor: '#fff8e7',
+    backgroundColor: '#F8F9FE',
+  },
+  tabBar: {
+    custom: true,
+    color: '#9AA5B8',
+    selectedColor: '#7B61FF',
+    backgroundColor: '#FFFFFF',
+    borderStyle: 'white',
+    list: [
+      { pagePath: 'pages/index/index', text: '首页' },
+      { pagePath: 'pages/question-bank/index', text: '题库' },
+      { pagePath: 'pages/profile/index', text: '我的' },
+    ],
   },
 })

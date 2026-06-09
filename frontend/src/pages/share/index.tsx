@@ -3,6 +3,8 @@ import Taro from '@tarojs/taro'
 
 import { PLACEHOLDER_MESSAGE } from '@/constants'
 import { useSessionStore } from '@/stores/sessionStore'
+import { switchMainTab } from '@/utils/mainTab'
+import { resolveQuizDurationSec } from '@/utils/formatTime'
 
 import './index.scss'
 
@@ -12,7 +14,7 @@ export default function SharePage() {
 
   Taro.useDidShow(() => {
     if (!report || !session) {
-      Taro.redirectTo({ url: '/pages/index/index' })
+      switchMainTab('home')
     }
   })
 
@@ -25,6 +27,7 @@ export default function SharePage() {
   }
 
   const failed = session.status === 'failed' || session.hearts <= 0
+  const displayDuration = resolveQuizDurationSec(session.answers, report.duration)
 
   return (
     <View className='app-page'>
@@ -43,7 +46,7 @@ export default function SharePage() {
           <View className='share-poster-score'>{Math.round(report.accuracy)}<Text>%</Text></View>
           <View className='share-poster-topic'>{report.topic}</View>
           <View className='share-poster-stats'>
-            用时 {report.duration} 秒 · 对 {report.correctCount} 错 {report.wrongCount}
+            用时 {displayDuration} 秒 · 对 {report.correctCount} 错 {report.wrongCount}
           </View>
           <View className='share-poster-footer'>
             <View className='share-poster-qr'><View className='qr-grid' /></View>

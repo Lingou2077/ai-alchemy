@@ -43,3 +43,8 @@ vendor/
 tmp/
 temp/
 *.tmp
+
+# Documentation (only docs/over/ is versioned; docs/myself/ is local)
+docs/**
+!docs/over/
+!docs/over/**

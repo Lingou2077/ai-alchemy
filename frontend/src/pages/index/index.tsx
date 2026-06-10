@@ -148,7 +148,9 @@ export default function IndexPage() {
                   onClick={() => setWebResearchEnabled((prev) => !prev)}
                 >
                   <View className={`web-research-switch ${webResearchEnabled ? 'on' : ''}`}>
-                    <View className='web-research-knob' />
+                    <View className='web-research-track'>
+                      <View className='web-research-knob' />
+                    </View>
                   </View>
                   <Text className='web-research-title'>联网搜索</Text>
                 </View>

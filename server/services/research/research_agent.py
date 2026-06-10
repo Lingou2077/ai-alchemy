@@ -9,6 +9,7 @@ from langchain_core.tools import BaseTool
 from chains.knowledge_chain import create_chat_model, load_prompt
 from config import settings
 from schemas.research import DegradedMode, InputKind, WebMaterial
+from services.research.context_budget import cap_materials_count, summarize_tool_result_for_agent
 from services.research.materials import (
     dedupe_materials,
     is_tavily_error_result,
@@ -120,7 +121,10 @@ async def run_research_agent(
                         continue
                     collected.extend(materials_from_tool(tool_call["name"], result))
                     messages.append(
-                        ToolMessage(content=str(result), tool_call_id=tool_call["id"])
+                        ToolMessage(
+                            content=summarize_tool_result_for_agent(tool_call["name"], result),
+                            tool_call_id=tool_call["id"],
+                        )
                     )
                 except Exception as exc:  # noqa: BLE001
                     had_tool_failures = True
@@ -137,7 +141,7 @@ async def run_research_agent(
     except TimeoutError:
         timed_out = True
 
-    materials = dedupe_materials(collected)
+    materials = cap_materials_count(dedupe_materials(collected))
     mode = resolve_degraded_mode(
         materials,
         had_tool_failures=had_tool_failures,

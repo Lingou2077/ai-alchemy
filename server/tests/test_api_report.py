@@ -20,6 +20,7 @@ async def test_generate_report_api(client, sample_knowledge, sample_question_set
         weakPoints=[WeakPoint(name="channel", reason="答错")],
         summary="总结",
         suggestion="建议",
+        shareTagline="channel 待精炼",
         conceptMastery=[
             ConceptNode(name="goroutine", mastery="partial", relatedQuestionCount=1)
         ],
@@ -53,6 +54,7 @@ async def test_generate_report_api(client, sample_knowledge, sample_question_set
     assert response.status_code == 200
     data = response.json()
     assert data["summary"] == "总结"
+    assert data["shareTagline"]
     assert data["weakPoints"][0]["name"] == "channel"
 
 

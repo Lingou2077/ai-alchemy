@@ -48,6 +48,25 @@ class ReportStatsResponse(BaseModel):
     related_history: list[dict] = Field(default_factory=list, alias="relatedHistory")
 
 
+class ReportLLMOutput(BaseModel):
+    """LLM 结构化输出；文本净化与长度约束在 pipeline 后处理阶段完成。"""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+    session_id: str = Field(default="", alias="sessionId")
+    topic: str = ""
+    accuracy: float = 0.0
+    total_questions: int = Field(default=0, alias="totalQuestions")
+    correct_count: int = Field(default=0, alias="correctCount")
+    wrong_count: int = Field(default=0, alias="wrongCount")
+    duration: int = 0
+    weak_points: list[WeakPoint] = Field(default_factory=list, alias="weakPoints")
+    summary: str = ""
+    suggestion: str = ""
+    share_tagline: str = Field(default="", alias="shareTagline")
+    concept_mastery: list[ConceptNode] = Field(default_factory=list, alias="conceptMastery")
+
+
 class ReportData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
@@ -61,6 +80,7 @@ class ReportData(BaseModel):
     weak_points: list[WeakPoint] = Field(default_factory=list, alias="weakPoints")
     summary: str
     suggestion: str
+    share_tagline: str = Field(default="", alias="shareTagline", max_length=24)
     concept_mastery: list[ConceptNode] = Field(default_factory=list, alias="conceptMastery")
     exp_gain: ExpGainResponse | None = Field(default=None, alias="expGain")
     stats: ReportStatsResponse | None = None

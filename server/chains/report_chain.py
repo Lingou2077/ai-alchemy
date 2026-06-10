@@ -3,7 +3,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import Runnable
 
 from chains.knowledge_chain import create_chat_model, load_prompt
-from schemas.report import ReportData
+from schemas.report import ReportLLMOutput
 
 
 def build_report_chain(
@@ -27,7 +27,7 @@ def build_report_chain(
         ]
     )
     runner = structured_runner or (model or create_chat_model()).with_structured_output(
-        ReportData,
+        ReportLLMOutput,
         method="function_calling",
     )
     return prompt | runner

@@ -18,20 +18,22 @@ from services.research.materials import (
     degraded_user_message,
     fallback_text_material,
 )
+from services.research.context_budget import format_materials_for_prompt
 from services.research.research_agent import run_research_agent
 from services.research.tavily_tool_factory import use_mock_tavily
+from config import settings
 from services.content_utils import normalize_content
 from services.session_store import research_store
 
 
 def _materials_to_text(materials: list[WebMaterial]) -> str:
-    blocks: list[str] = []
-    for item in materials:
-        header = f"### {item.title or item.url or 'material'} ({item.source})"
-        if item.url:
-            header += f"\nURL: {item.url}"
-        blocks.append(f"{header}\n{item.content}")
-    return "\n\n".join(blocks) if blocks else "（无联网材料）"
+    return format_materials_for_prompt(
+        materials,
+        settings.topic_candidate_materials_budget,
+        include_source_in_title=True,
+        url_line_prefix="URL",
+        empty_text="（无联网材料）",
+    )
 
 
 def _synthetic_candidate(user_content: str) -> TopicCandidate:

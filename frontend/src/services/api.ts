@@ -241,6 +241,9 @@ export function mapReportResponse(payload: Record<string, unknown>): ReportData 
       [],
     summary: String(payload.summary ?? ''),
     suggestion: String(payload.suggestion ?? ''),
+    shareTagline: String(
+      payload.shareTagline ?? payload.share_tagline ?? '',
+    ),
     conceptMastery: (payload.conceptMastery as ReportData['conceptMastery']) ||
       (payload.concept_mastery as ReportData['conceptMastery']) ||
       [],

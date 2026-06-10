@@ -27,6 +27,7 @@ async def test_end_to_end_quiz_flow(client, sample_knowledge, sample_question_se
         weakPoints=[],
         summary="通关总结",
         suggestion="继续练习",
+        shareTagline="炼金成功！",
         conceptMastery=[
             ConceptNode(name="goroutine", mastery="mastered", relatedQuestionCount=1)
         ],

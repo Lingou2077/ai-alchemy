@@ -75,6 +75,7 @@ export interface ReportData {
   weakPoints: WeakPoint[]
   summary: string
   suggestion: string
+  shareTagline: string
   conceptMastery: ConceptNode[]
   expGain?: ExpGain | null
   stats?: ReportStats | null

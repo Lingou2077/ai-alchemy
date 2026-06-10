@@ -2,8 +2,7 @@ import json
 from typing import Any
 
 from schemas.research import DegradedMode, WebMaterial
-
-EXTRACT_CONTENT_MAX = 8000
+from services.research.context_budget import truncate_content_for_storage
 
 
 def is_tavily_error_result(raw: Any) -> bool:
@@ -41,7 +40,7 @@ def materials_from_search_result(raw: Any) -> list[WebMaterial]:
                 source="search",
                 title=str(item.get("title") or ""),
                 url=str(item.get("url") or ""),
-                content=content,
+                content=truncate_content_for_storage(content, "search"),
                 score=float(item["score"]) if item.get("score") is not None else None,
             )
         )
@@ -63,7 +62,7 @@ def materials_from_extract_result(raw: Any) -> list[WebMaterial]:
                 source="extract",
                 title=url,
                 url=url,
-                content=content[:EXTRACT_CONTENT_MAX],
+                content=truncate_content_for_storage(content, "extract"),
                 score=None,
             )
         )

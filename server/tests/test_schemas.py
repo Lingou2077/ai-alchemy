@@ -42,12 +42,14 @@ def test_report_schema_aliases():
         weakPoints=[WeakPoint(name="channel", reason="答错一题")],
         summary="总结",
         suggestion="建议",
+        shareTagline="Go 炼成成功！",
         conceptMastery=[
             ConceptNode(name="goroutine", mastery="mastered", relatedQuestionCount=2)
         ],
     )
     dumped = report.model_dump(by_alias=True)
     assert dumped["weakPoints"][0]["name"] == "channel"
+    assert dumped["shareTagline"] == "Go 炼成成功！"
     assert dumped["conceptMastery"][0]["relatedQuestionCount"] == 2
 
 

@@ -1,35 +1,6 @@
+from config import settings
 from schemas.research import EXPLORE_ALL_TOPIC_ID, TopicCandidate, WebMaterial
-
-GROUNDING_BUDGET = 3500
-
-
-def _truncate(text: str, limit: int) -> str:
-    if len(text) <= limit:
-        return text
-    return text[:limit] + "…"
-
-
-def _format_materials(materials: list[WebMaterial], budget: int) -> str:
-    lines: list[str] = []
-    used = 0
-    sorted_materials = sorted(
-        materials,
-        key=lambda item: item.score if item.score is not None else 0.0,
-        reverse=True,
-    )
-    for item in sorted_materials:
-        block = f"### {item.title or item.url}\n"
-        if item.url:
-            block += f"来源: {item.url}\n"
-        block += item.content
-        if used + len(block) > budget:
-            remaining = budget - used
-            if remaining > 100:
-                lines.append(_truncate(block, remaining))
-            break
-        lines.append(block)
-        used += len(block) + 2
-    return "\n\n".join(lines)
+from services.research.context_budget import format_materials_for_prompt
 
 
 def assemble_focused_document(
@@ -37,7 +8,7 @@ def assemble_focused_document(
     candidate: TopicCandidate,
     materials: list[WebMaterial],
 ) -> str:
-    body = _format_materials(materials, GROUNDING_BUDGET)
+    body = format_materials_for_prompt(materials, settings.grounding_budget)
     return (
         f"## 用户原始输入\n{user_content}\n\n"
         f"## 用户确认的学习主题\n{candidate.title}: {candidate.summary}\n\n"
@@ -54,7 +25,7 @@ def assemble_explore_all_document(
         f"### 方向 {index + 1}: {item.title} — {item.summary}"
         for index, item in enumerate(candidates)
     ]
-    body = _format_materials(materials, GROUNDING_BUDGET)
+    body = format_materials_for_prompt(materials, settings.grounding_budget)
     return (
         f"## 用户原始输入\n{user_content}\n\n"
         "## 学习范围：用户尚未确定方向，需广泛了解以下相关含义\n"

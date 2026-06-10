@@ -8,6 +8,7 @@ from langchain_core.tools import StructuredTool
 from schemas.research import DegradedMode, InputKind
 from services.research.mock_tavily_tools import build_mock_tavily_tools
 from services.research.research_agent import run_research_agent, sanitize_tool_args
+from services.research.context_budget import summarize_tool_result_for_agent
 
 
 def _empty_search_tool() -> StructuredTool:
@@ -170,6 +171,14 @@ async def test_research_agent_partial_on_tool_failure():
     assert used == 2
     assert len(materials) >= 1
     assert mode == DegradedMode.partial
+
+
+def test_summarize_tool_result_not_full_json():
+    huge = "z" * 20000
+    payload = {"results": [{"title": "T", "url": "https://a.com", "content": huge, "score": 0.5}]}
+    summary = summarize_tool_result_for_agent("tavily_search", json.dumps(payload))
+    assert len(summary) < len(json.dumps(payload))
+    assert "tavily_search" in summary
 
 
 def test_sanitize_tool_args_strips_forbidden_search_params():

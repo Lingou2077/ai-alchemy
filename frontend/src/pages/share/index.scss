@@ -1,0 +1,38 @@
+.poster-page {
+  align-items: center;
+}
+
+.poster-preview {
+  width: 100%;
+  max-width: 300px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  background: transparent;
+}
+
+.poster-preview--placeholder {
+  min-height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.poster-canvas-hidden {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.poster-retry {
+  margin-top: var(--space-sm);
+}
+
+.poster-actions .btn-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}

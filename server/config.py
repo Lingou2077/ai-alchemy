@@ -30,5 +30,13 @@ class Settings(BaseSettings):
     research_session_ttl_seconds: int = 1800
     generation_task_ttl_seconds: int = 3600
 
+    search_content_max: int = 2000
+    extract_content_max: int = 4500
+    materials_max_count: int = 20
+    topic_candidate_materials_budget: int = 7000
+    grounding_budget: int = 4500
+    agent_tool_content_preview_chars: int = 600
+    agent_tool_message_max_chars: int = 5000
+
 
 settings = Settings()

@@ -29,6 +29,7 @@ def make_fake_report(session_id: str, topic: str, accuracy: float = 80.0) -> Rep
         weakPoints=[WeakPoint(name="goroutine", reason="答错")],
         summary="总结内容",
         suggestion="建议内容",
+        shareTagline="继续精炼",
         conceptMastery=[ConceptNode(name="goroutine", mastery="partial", relatedQuestionCount=1)],
     )
 

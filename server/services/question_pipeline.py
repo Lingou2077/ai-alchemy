@@ -16,7 +16,7 @@ from schemas.question import (
     QuestionPublic,
     QuestionSet,
 )
-from schemas.report import AnswerRecord, GenerateReportRequest, ReportData
+from schemas.report import AnswerRecord, GenerateReportRequest, ReportData, ReportLLMOutput
 from schemas.research import EXPLORE_ALL_TOPIC_ID, TopicCandidate, WebMaterial
 from schemas.task import ResearchSessionSnapshot, TaskStep
 from services.grounding import (
@@ -27,7 +27,9 @@ from services.grounding import (
 )
 from services.research.research_service import get_research_session_or_410
 from services.content_utils import normalize_content
+from services.report_sanitize import sanitize_report_llm_output
 from services.session_store import session_store
+from services.share_tagline import resolve_share_tagline
 
 logger = logging.getLogger(__name__)
 
@@ -243,7 +245,7 @@ async def run_report_pipeline(request: GenerateReportRequest) -> ReportData:
     if request.duration_sec is not None and request.duration_sec > 0:
         duration = request.duration_sec
     report_chain = build_report_chain()
-    report = await invoke_with_retry(
+    raw: ReportLLMOutput = await invoke_with_retry(
         report_chain,
         {
             "structured_knowledge": session.knowledge.model_dump_json(ensure_ascii=False),
@@ -255,12 +257,26 @@ async def run_report_pipeline(request: GenerateReportRequest) -> ReportData:
         },
         "报告生成",
     )
+    raw = sanitize_report_llm_output(raw)
 
-    report.session_id = request.session_id
-    report.topic = session.knowledge.topic
-    report.accuracy = accuracy
-    report.total_questions = total
-    report.correct_count = correct
-    report.wrong_count = wrong
-    report.duration = duration
+    report = ReportData(
+        sessionId=request.session_id,
+        topic=session.knowledge.topic,
+        accuracy=accuracy,
+        totalQuestions=total,
+        correctCount=correct,
+        wrongCount=wrong,
+        duration=duration,
+        weakPoints=raw.weak_points,
+        summary=raw.summary,
+        suggestion=raw.suggestion,
+        shareTagline="",
+        conceptMastery=raw.concept_mastery,
+    )
+    report.share_tagline = resolve_share_tagline(
+        raw.share_tagline,
+        topic=session.knowledge.topic,
+        quiz_status=request.quiz_status,
+        accuracy=accuracy,
+    )
     return report

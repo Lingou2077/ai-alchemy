@@ -21,6 +21,14 @@ class Settings(BaseSettings):
     upload_dir: str = "uploads"
     public_base_url: str = "http://127.0.0.1:8000"
 
+    avatar_storage: str = "local"
+    cos_secret_id: str = ""
+    cos_secret_key: str = ""
+    cos_region: str = "ap-guangzhou"
+    cos_bucket: str = ""
+    cos_avatar_prefix: str = "aialchemy/avatars"
+    cos_public_base_url: str = ""
+
     tavily_api_key: str = ""
     tavily_mock: bool = False
     research_agent_max_tool_calls: int = 4

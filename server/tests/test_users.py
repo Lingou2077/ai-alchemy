@@ -1,5 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
 from httpx import AsyncClient
+
+from config import settings
 
 
 async def login(client: AsyncClient, code: str = "mock-user-me") -> str:
@@ -81,6 +85,38 @@ async def test_upload_avatar(client: AsyncClient):
     body = response.json()
     assert body["avatarUrl"].endswith(".png")
     assert "/uploads/avatars/" in body["avatarUrl"]
+
+
+@pytest.mark.asyncio
+async def test_upload_avatar_cos_mode(client: AsyncClient):
+    settings.avatar_storage = "cos"
+    settings.cos_avatar_prefix = "aialchemy/avatars"
+
+    mock_storage = MagicMock()
+    mock_storage.upload.return_value = (
+        "https://yunpic-1348558641.cos.ap-guangzhou.myqcloud.com/aialchemy/avatars/5_test.png"
+    )
+
+    token = await login(client, "mock-upload-avatar-cos")
+    png_bytes = (
+        b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+        b"\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01"
+        b"\x00\x00\x05\x00\x01\r\n-\xdb\x00\x00\x00\x00IEND\xaeB`\x82"
+    )
+
+    with patch("services.avatar_service.get_avatar_storage", return_value=mock_storage):
+        response = await client.post(
+            "/api/v1/users/me/avatar",
+            headers={"Authorization": f"Bearer {token}"},
+            files={"file": ("avatar.png", png_bytes, "image/png")},
+        )
+
+    settings.avatar_storage = "local"
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["avatarUrl"].startswith("https://")
+    assert "/aialchemy/avatars/" in body["avatarUrl"]
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, File, HTTPException, Query, Request, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from sqlalchemy.orm import Session
 
-from config import settings
 from db.models.user import User
 from db.session import get_db
 from dependencies import get_current_user
@@ -12,7 +11,7 @@ from schemas.user_data import (
     WrongQuestionDetail,
     WrongQuestionListResponse,
 )
-from services.avatar_service import build_public_avatar_url, save_avatar_file
+from services.avatar_service import save_avatar_file
 from services.quiz_record_service import (
     delete_quiz_record,
     get_quiz_record_for_user,
@@ -111,18 +110,17 @@ async def delete_me_history(
 
 @router.post("/me/avatar", response_model=UserPublic, response_model_by_alias=True)
 async def upload_me_avatar(
-    request: Request,
     file: UploadFile = File(...),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ) -> UserPublic:
     try:
-        relative_path = save_avatar_file(current_user.id, file)
+        avatar_url = save_avatar_file(current_user.id, file)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail="头像上传失败，请稍后重试") from exc
 
-    base_url = settings.public_base_url.strip() or str(request.base_url).rstrip("/")
-    avatar_url = build_public_avatar_url(relative_path, base_url)
     user = update_user_profile(db, current_user, None, avatar_url)
     return UserPublic.model_validate(serialize_user(user, db))
 

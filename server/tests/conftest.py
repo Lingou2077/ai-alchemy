@@ -30,6 +30,7 @@ if database_url:
 
 os.environ["DEV_MOCK_LOGIN"] = "true"
 os.environ.setdefault("JWT_SECRET", "test-jwt-secret")
+os.environ["AVATAR_STORAGE"] = "local"
 
 from db.models.exp_log import ExpLog  # noqa: E402
 from db.models.generation_task import GenerationTask  # noqa: E402

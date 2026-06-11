@@ -1,6 +1,6 @@
 # AI炼金 — 方案设计（已实现功能版）
 
-> **版本**：整合版 V1.0  
+> **版本**：整合版 V1.1  
 > **日期**：2026-06-10  
 > **说明**：本文档描述当前已落地的技术架构与实现方案。规划中的技术选型见 [项目TODO.md](./项目TODO.md)。
 
@@ -28,6 +28,7 @@ flowchart TB
         DS[DeepSeek API]
         TV[Tavily 联网检索]
         WX[微信 jscode2session]
+        COS[腾讯云 COS]
     end
 
     Pages --> API --> Routers
@@ -36,6 +37,7 @@ flowchart TB
     Routers --> Session
     Routers --> MySQL
     Routers --> WX
+    Routers --> COS
 ```
 
 | 层级 | 技术 | 说明 |
@@ -48,6 +50,7 @@ flowchart TB
 | 主模型 | DeepSeek（OpenAI 兼容） | `deepseek-chat` |
 | 联网检索 | Tavily + Research Agent | LangChain Tool 循环调用 |
 | 持久化 | MySQL 8.0+ | 用户、历史、错题、经验流水 |
+| 头像存储 | 腾讯云 COS | 后端中转上传；桶内 `aialchemy/avatars/`；支持 `local` 降级 |
 | 会话存储 | 内存 dict | 答题 session、research session（带 TTL） |
 
 ---
@@ -68,6 +71,7 @@ ai-learn-go/
 │   ├── main.py               # 应用入口
 │   ├── routers/              # API 路由
 │   ├── services/             # 业务服务层
+│   │   └── storage/          # 头像存储抽象（local / cos）
 │   ├── chains/               # LangChain 链
 │   ├── prompts/              # Prompt 模板（8 个 txt）
 │   ├── schemas/              # Pydantic 模型
@@ -180,14 +184,60 @@ sequenceDiagram
 | GET/PATCH | `/api/v1/users/me` | 读/改昵称头像 |
 | GET | `/api/v1/users/me/stats` | 用户统计 |
 | GET/DELETE | `/api/v1/users/me/history[/{session_id}]` | 历史列表/详情/删除 |
-| POST | `/api/v1/users/me/avatar` | 头像上传 |
+| POST | `/api/v1/users/me/avatar` | 头像上传（后端中转至 COS 或本地，返回完整 URL） |
 | GET | `/api/v1/users/me/wrong-questions[/{id}]` | 错题列表/详情 |
 
-### 4.5 静态资源
+### 4.5 头像存储与静态资源
+
+#### 头像上传流程
+
+```mermaid
+sequenceDiagram
+    participant MP as 微信小程序
+    participant API as FastAPI
+    participant ST as AvatarStorage
+    participant COS as 腾讯云 COS
+    participant DB as MySQL
+
+    MP->>MP: chooseAvatar 获取临时路径
+    MP->>API: POST /users/me/avatar（uploadFile）
+    API->>API: 校验格式 / 大小（≤2MB）
+    alt AVATAR_STORAGE=cos
+        API->>ST: CosAvatarStorage.upload
+        ST->>COS: PutObject aialchemy/avatars/{user_id}_{uuid}.ext
+        COS-->>ST: 成功
+        ST-->>API: HTTPS 公网 URL
+    else AVATAR_STORAGE=local
+        API->>ST: LocalAvatarStorage.upload
+        ST-->>API: /uploads/avatars/...（拼 PUBLIC_BASE_URL）
+    end
+    API->>DB: 更新 users.avatar_url
+    API-->>MP: UserPublic.avatarUrl
+    MP->>MP: Image src 直接加载 HTTPS URL
+```
+
+| 组件 | 路径 | 职责 |
+|------|------|------|
+| 头像服务 | `services/avatar_service.py` | 校验、生成 key、调用存储后端 |
+| 存储工厂 | `services/storage/__init__.py` | 按 `AVATAR_STORAGE` 选择 local / cos |
+| COS 后端 | `services/storage/cos_backend.py` | `cos-python-sdk-v5` 上传，返回公网 URL |
+| 本地后端 | `services/storage/local_backend.py` | 写入 `uploads/avatars/`（开发降级） |
+
+**COS 对象规范**（`AVATAR_STORAGE=cos` 时）：
+
+| 项 | 值 |
+|----|-----|
+| Object Key | `aialchemy/avatars/{user_id}_{uuid}.{ext}` |
+| 对外 URL | `https://{bucket}.cos.{region}.myqcloud.com/aialchemy/avatars/...` |
+| DB 存储 | `users.avatar_url` 存完整 HTTPS URL |
+
+**前端**：`services/userApi.ts` 中 `resolveAvatarSrc()` 对 `https://` 开头 URL 原样返回，无需改动。
+
+#### 静态资源（本地兼容）
 
 | 路径 | 说明 |
 |------|------|
-| `/uploads/avatars/` | 用户头像文件 |
+| `/uploads/avatars/` | 本地模式头像；`AVATAR_STORAGE=local` 时使用；历史本地头像只读兼容 |
 
 ---
 
@@ -266,7 +316,8 @@ sequenceDiagram
 | 微信登录 | `services/auth_service.py`，jscode2session |
 | 开发 Mock | `DEV_MOCK_LOGIN=true` 时跳过微信验证 |
 | 答案防篡改 | 完整题目含答案仅存服务端 session，前端出题 API 不返回答案 |
-| 密钥管理 | 所有 API Key 在 `server/.env`，`.gitignore` 忽略 |
+| 密钥管理 | 所有 API Key（含 COS 密钥）在 `server/.env`，`.gitignore` 忽略 |
+| 头像访问 | COS 模式走 HTTPS 公网域名；微信公众平台需配置 downloadFile 合法域名 |
 
 ---
 
@@ -281,7 +332,12 @@ sequenceDiagram
 | `JWT_SECRET` | JWT 签名 |
 | `WECHAT_APP_ID` / `WECHAT_APP_SECRET` | 微信登录 |
 | `TAVILY_API_KEY` / `TAVILY_MOCK` | 联网检索 |
-| `PUBLIC_BASE_URL` | 头像等静态资源对外 URL |
+| `PUBLIC_BASE_URL` | 本地模式头像对外 URL |
+| `AVATAR_STORAGE` | 头像存储：`local` / `cos` |
+| `COS_SECRET_ID` / `COS_SECRET_KEY` | 腾讯云 COS API 密钥 |
+| `COS_REGION` / `COS_BUCKET` | COS 地域与桶名 |
+| `COS_AVATAR_PREFIX` | 桶内前缀，默认 `aialchemy/avatars` |
+| `COS_PUBLIC_BASE_URL` | COS 访问域名（如 `https://yunpic-1348558641.cos.ap-guangzhou.myqcloud.com`） |
 | `DEV_MOCK_LOGIN` | 开发 Mock 登录开关 |
 
 前端环境：
@@ -302,6 +358,7 @@ sequenceDiagram
 - Tavily Research Agent（含 Mock）
 - 经验服务、错题服务、历史服务
 - 分享 tagline 生成
+- 头像上传（local / cos 模式，含 `test_avatar_service`、`test_cos_backend`）
 
 ---
 
@@ -313,5 +370,7 @@ sequenceDiagram
 | 前端输入 500 字 | 后端支持 5000 字，前端有独立上限 |
 | 本地 Storage 不迁移 | 登录后新数据走云端，旧本地历史不自动合并 |
 | 无 SSE 流式 | 生成进度通过轮询展示，非流式推送 |
+| 旧本地头像未迁移 | 历史 `http://IP:8000/uploads/...` 头像仍依赖本机静态服务；新上传走 COS |
+| 换头像不删旧 COS 对象 | 每次上传新 uuid 文件，旧对象留存于桶内 |
 
-更多待改进项见 [项目TODO.md](./项目TODO.md)。
+更多待改进项见 [项目TODO.md](./项目TODO.md)。详细迁移方案见 [头像COS存储-方案设计.md](./头像COS存储-方案设计.md)。

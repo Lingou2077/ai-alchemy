@@ -1,7 +1,7 @@
 # AI炼金 — 方案设计（已实现功能版）
 
 > **版本**：整合版 V1.1  
-> **日期**：2026-06-10  
+> **日期**：2026-06-11  
 > **说明**：本文档描述当前已落地的技术架构与实现方案。规划中的技术选型见 [项目TODO.md](./项目TODO.md)。
 
 ---
@@ -107,13 +107,14 @@ sequenceDiagram
     DS-->>API: QuestionSet
     API-->>FE: sessionId + questions
 
-    loop 每道题
+    loop 每道题（灵韵归零仍可继续）
         U->>FE: 选择答案
         FE->>API: POST /answers/check
         API-->>FE: 正误 + 讲解
+        Note over FE: 答错扣灵韵，下限 0
     end
 
-    FE->>API: POST /report/generate
+    FE->>API: POST /report/generate（quiz_status 按结束时灵韵判定）
     API->>DS: Task3 报告生成
     API->>DB: 同步历史/错题/EXP（已登录）
     API-->>FE: ReportData + shareTagline
@@ -175,7 +176,7 @@ sequenceDiagram
 | POST | `/api/v1/questions/generate` | 创建 AI 出题异步任务 |
 | GET | `/api/v1/questions/generate/{task_id}` | 轮询出题任务 |
 | POST | `/api/v1/answers/check` | 判题（返讲解，答案存 session 防篡改） |
-| POST | `/api/v1/report/generate` | 生成报告；登录用户同步 DB + EXP |
+| POST | `/api/v1/report/generate` | 生成报告；请求体 `quiz_status`（`completed` / `failed`）决定 EXP；登录用户同步 DB |
 
 ### 4.4 用户与数据
 
@@ -259,10 +260,12 @@ sequenceDiagram
 
 | 规则 | 值 |
 |------|-----|
-| 完成炼金 | +10 EXP |
-| 闯关成功 | 额外 +5 EXP |
+| 完成炼金 | +10 EXP（全部答完即结算，与灵韵是否耗尽无关） |
+| 闯关成功 | 额外 +5 EXP（`quiz_status=completed`，结束时灵韵 > 0） |
+| 灵韵耗尽 | `quiz_status=failed`，仅 +10 EXP；答题过程中归零不中断流程 |
 | 等级 | 1–10 级，对应称号体系 |
-| 配置 | `services/exp_config.py` |
+| 结算实现 | `services/exp_service.py`；前端 `pages/quiz` 在最后一题提交 `quiz_status` |
+| 等级配置 | `services/exp_config.py` |
 
 ### 5.3 前端本地存储
 
@@ -304,7 +307,8 @@ sequenceDiagram
 | 海报 Canvas | `utils/posterCanvas.ts` | 750×1334 战绩图绘制 |
 | 海报分享 | `utils/posterShare.ts` | 保存相册、微信分享 |
 | 虚拟列表 | `components/VirtualList` | 长列表性能优化 |
-| 灵韵徽章 | `components/LingyunBadge` | 3 命生命值展示 |
+| 灵韵徽章 | `components/LingyunBadge` | 3 颗灵韵展示（0–3，答错扣 1，下限 0） |
+| 答题灵韵逻辑 | `pages/quiz/index.tsx` | 灵韵归零后继续作答；最后一题按 `hearts > 0` 传 `completed` / `failed` |
 
 ---
 

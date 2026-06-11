@@ -158,7 +158,7 @@ export default function QuizPage() {
           answeredAt,
         }
         const nextAnswers = [...answers, record]
-        const nextHearts = correct ? hearts : hearts - 1
+        const nextHearts = correct ? hearts : Math.max(0, hearts - 1)
 
         setIsCorrect(correct)
         setExplanation(result.explanation)
@@ -201,7 +201,7 @@ export default function QuizPage() {
           answeredAt,
         }
         const nextAnswers = [...answers, record]
-        const nextHearts = correct ? hearts : hearts - 1
+        const nextHearts = correct ? hearts : Math.max(0, hearts - 1)
         setIsCorrect(correct)
         setExplanation(result.explanation)
         setCorrectAnswerKeys(result.correct_answer)
@@ -227,12 +227,9 @@ export default function QuizPage() {
 
   const goNext = async () => {
     if (reportGenerating) return
-    if (hearts <= 0) {
-      await finishQuiz('failed', hearts, answers)
-      return
-    }
     if (currentIndex >= questions.length - 1) {
-      await finishQuiz('completed', hearts, answers)
+      const status = hearts > 0 ? 'completed' : 'failed'
+      await finishQuiz(status, hearts, answers)
       return
     }
     setCurrentIndex((value) => value + 1)

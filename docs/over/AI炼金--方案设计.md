@@ -341,7 +341,7 @@ sequenceDiagram
 | `COS_SECRET_ID` / `COS_SECRET_KEY` | 腾讯云 COS API 密钥 |
 | `COS_REGION` / `COS_BUCKET` | COS 地域与桶名 |
 | `COS_AVATAR_PREFIX` | 桶内前缀，默认 `aialchemy/avatars` |
-| `COS_PUBLIC_BASE_URL` | COS 访问域名（如 `https://yunpic-1348558641.cos.ap-guangzhou.myqcloud.com`） |
+| `COS_PUBLIC_BASE_URL` | COS 访问域名（如 `https://aialchemy-1234567890.cos.ap-guangzhou.myqcloud.com`） |
 | `DEV_MOCK_LOGIN` | 开发 Mock 登录开关 |
 
 前端环境：
@@ -376,5 +376,3 @@ sequenceDiagram
 | 无 SSE 流式 | 生成进度通过轮询展示，非流式推送 |
 | 旧本地头像未迁移 | 历史 `http://IP:8000/uploads/...` 头像仍依赖本机静态服务；新上传走 COS |
 | 换头像不删旧 COS 对象 | 每次上传新 uuid 文件，旧对象留存于桶内 |
-
-更多待改进项见 [项目TODO.md](./项目TODO.md)。详细迁移方案见 [头像COS存储-方案设计.md](./头像COS存储-方案设计.md)。
